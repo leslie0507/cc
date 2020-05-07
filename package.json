@@ -1,0 +1,40 @@
+{
+  "name": "vue",
+  "version": "4.2.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "dev": "npm run serve",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "electron_dev": "npm run build && electron electron.js"
+  },
+  "dependencies": {
+    "@antv/data-set": "^0.10.2",
+    "@antv/g2": "^3.5.11",
+    "axios": "^0.18.0",
+    "babel-polyfill": "^6.26.0",
+    "electron-packager": "^14.2.1",
+    "element-ui": "^2.11.0",
+    "image-webpack-loader": "^6.0.0",
+    "mavon-editor": "^2.6.17",
+    "node-sass": "^4.13.1",
+    "postcss-px2rem": "^0.3.0",
+    "px2rem-loader": "^0.1.9",
+    "sass-loader": "^8.0.2",
+    "vue": "^2.6.10",
+    "vue-cropperjs": "^3.0.0",
+    "vue-html-loader": "^1.2.4",
+    "vue-progressbar": "^0.7.5",
+    "vue-router": "^3.0.3",
+    "xe-utils": "^2.3.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.9.0",
+    "@vue/cli-service": "^3.9.0",
+    "moment": "^2.24.0",
+    "postcss-import": "^12.0.1",
+    "postcss-url": "^8.0.0",
+    "vue-template-compiler": "^2.6.10"
+  }
+}
