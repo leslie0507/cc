@@ -69,13 +69,13 @@ http.interceptors.response.use(
       try {
         let _handle = response.data;
         
-        if (_handle && _handle.code !== AppConfig.httpConst.HTTP_SUCCESS) {
-          //需要登陆
-          if (AppConfig.httpConst.HTTP_NOT_AUTH.indexOf(_handle.code*1) != -1)
-            router.push({
-              path: "/login"
-          });
-        }
+        // if (_handle && _handle.code !== AppConfig.httpConst.HTTP_SUCCESS) {
+        //   //需要登陆
+        //   if (AppConfig.httpConst.HTTP_NOT_AUTH.indexOf(_handle.code*1) != -1)
+        //     router.push({
+        //       path: "/login"
+        //   });
+        // }
         return _handle;
       } catch (error) {
         console.log(error);
@@ -84,7 +84,7 @@ http.interceptors.response.use(
       }
   },
   error => {
-    app.resNotice.warning('response filed!',app.respMessage(error))
+    // app.resNotice.warning('response filed!',app.respMessage(error))
   }
 );
 
