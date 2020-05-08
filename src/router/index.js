@@ -27,6 +27,11 @@ export default new Router({
             ]
         },
         {
+            path: '/editCase',
+            component: resolve=>(require(["../components/page/editCase.vue"],resolve)),
+            meta: { title: '编辑病例' }
+        },
+        {
             path: '/login',
             component: resolve=>(require(["../components/page/login.vue"],resolve)),
             meta: { title: '登录' }
