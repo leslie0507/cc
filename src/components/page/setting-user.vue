@@ -15,7 +15,7 @@
                         <span>医院名称</span>
                         <input class="el-input setting-user-input" type="text" />
                     </div>
-                   
+
                     <div class="user-pwd">
                         <span>用户密码</span>
                         <input class="el-input setting-user-input" type="password" />
@@ -101,7 +101,7 @@ export default {
 }
 .setting-user-input {
     width: 274px;
-    height: 52px;
+    height: 50px;
     margin-left: 14px;
 }
 // 重置文本框内容的输入样式
@@ -174,19 +174,16 @@ input[type='password'] {
             font-family: Microsoft YaHei;
             color: rgba(153, 153, 153, 1);
             .input-wrapper {
-                
                 div {
-                    width:464px;
-                
+                    width: 464px;
                     padding: 18px 0;
-                    span{
-                        padding-left:44px;
+                    span {
+                        padding-left: 44px;
                     }
                 }
-                div:last-of-type{
-                    border-top:1px solid rgba(204,204,204,1);
+                div:last-of-type {
+                    border-top: 1px solid rgba(204, 204, 204, 1);
                 }
-               
             }
         }
     }

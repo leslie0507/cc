@@ -9,14 +9,33 @@
                 </button>
             </div>
             <!-- 设置信息区域-->
-            <div class="setting-wrapper">
-                <ul>
-                    <li>显示设置</li>
-                    <li>用户设置</li>
-                    <li>后台硬件维护</li>
-                    <li>语言设置</li>
-                    <li>恢复出厂设置</li>
-                </ul>
+            <div class="setting-time-wrapper">
+                <!-- 文本框区域 -->
+                <div class="input-wrapper">
+                    <div>
+                        <input class="el-input setting-time-input" type="text" />
+                    </div>
+                    <div>
+                        <input class="el-input setting-time-input" type="text" />
+                    </div>
+                    <div>
+                        <input class="el-input setting-time-input" type="text" />
+                    </div>
+                    <div>
+                        <input class="el-input setting-time-input" type="text" />
+                    </div>
+                    <div>
+                        <input class="el-input setting-time-input" type="text" />
+                    </div>
+                </div>
+                <!-- 时间显示区域 -->
+                <div class="time-show-wrapper">
+                    <p>2014/9/5 15:55</p>
+                </div>
+                <!-- 按钮区域 -->
+                <div class="btn-wrapper">
+                    <button class="el-btn el-btn-primary btn-save">保存修改</button>
+                </div>
             </div>
         </div>
     </div>
@@ -95,14 +114,21 @@ export default {
     width: 142px;
     height: 46px;
 }
-
-.password {
-    width: 250px;
-    height: 40px;
-    margin-bottom: 39px;
+// 输入框大小
+.setting-time-input {
+    width: 274px;
+    height: 50px;
+   
+}
+// 重置文本框内容的输入样式
+input[type='text'] {
+    font-size: 24px;
+    color: rgba(153, 153, 153, 1);
+    // 去掉浏览器默认input内容样式
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 .login-wrap {
-    
     width: 100%;
     height: 100%;
     display: flex;
@@ -110,20 +136,17 @@ export default {
     align-items: center;
     .loading-img {
         width: 504px;
-        height: 500px;
-        background: #e1ecef;
+        height: 586px;
         
+        background: #e1ecef;
+
         box-shadow: 0px 4px 10px 0px rgba(12, 3, 6, 0.2);
         border-radius: 8px;
-        .bth-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
+        
 
         .title {
-            width: 504px;
+             width: 100%;
+           
             height: 60px;
             display: flex;
             justify-content: center;
@@ -145,28 +168,48 @@ export default {
                 right: 20px;
             }
         }
-        .setting-wrapper {
-            width: 504px;
-            height: 440px;
-           
-            ul {
-                list-style: none;
-                margin: 0 20px;
+        .setting-time-wrapper {
+             width: 100%;
+            
+
+            .input-wrapper {
+                 width: 100%;
                
-                li {
-                    width: 100%;
-                    height:85px;
-                    font-size: 24px;
-                    font-family: Microsoft YaHei;
-                    font-weight: 400;
-                    color: rgba(119, 127, 143, 1);
-                    text-align: center;
-                   line-height: 85px;
-                    border-bottom: 1px solid rgba(204,204,204,1) ;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                padding: 38px 0 15px 0;
+                div {
+                    margin-bottom: 20px;
                 }
-                // 去掉最后一个li下边框
-                li:last-of-type{
-                    border:none;
+            }
+            .time-show-wrapper {
+                 width: 100%;
+                
+                font-size: 30px;
+                color: rgba(51, 153, 102, 1);
+                text-align: center;
+            }
+            .btn-wrapper {
+               
+                
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                
+                padding:27px 20px 20px 0;
+                .btn-save {
+                    width: 128px;
+                    height: 40px;
+                    font-size: 18px;
+                    font-family: Microsoft YaHei;
+                    font-weight: bold;
+                    color: rgba(255, 255, 255, 1);
+                    text-shadow: 0px 1px 0px rgba(12, 3, 7, 0.4);
+                    text-align: center;
+                   
+                   
                 }
             }
         }
