@@ -37,6 +37,11 @@ export default new Router({
             meta: { title: '登录' }
         },
         {
+            path: '/setting',
+            component: resolve=>(require(["../components/page/setting.vue"],resolve)),
+            meta: { title: '设置' }
+        },
+        {
             path: '/loading',
             component: resolve=>(require(["../components/page/loadingPage.vue"],resolve)),
             meta: { title: '登录' }
