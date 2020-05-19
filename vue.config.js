@@ -9,7 +9,8 @@ const px2rem = require('postcss-px2rem')
 // 配置基本大小
 const postcss = px2rem({
   // 基准大小 baseSize，需要和rem.js中相同
-  remUnit: 16
+  remUnit: 16,
+  minPixelValue: 2 //设置要替换的最小像素值(3px会被转rem)。 默认 0
 })
 
 module.exports = {

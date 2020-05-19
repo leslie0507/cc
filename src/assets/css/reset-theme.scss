@@ -1,3 +1,6 @@
+input {
+  outline: none;
+}
 .el-input {
   width:250px;
   height:40px;
@@ -11,9 +14,7 @@
 }
 
 .el-btn {
-  background:linear-gradient(0deg,#FFFFFF,#E7E7E7);
-  border:1px solid rgba(179, 179, 179, 1);
-  border-radius:8px;
+  border-radius:10px;
   text-align: center;
   display: flex;
   justify-content: center;
@@ -21,9 +22,122 @@
   font-size:18px;
   font-weight:bold;
   color:rgba(119,127,143,1);
-  text-shadow:0px 1px 0px rgba(255,255,255,1);
   outline: none;
+  border: none;
   cursor: pointer;
+  box-sizing: border-box;
+}
+
+// 墨绿色
+.el-btn-info-mlv {
+  position: relative;
+  border-radius:10px;
+  border:1px solid rgba(60, 185, 157, 1);
+  background:linear-gradient(0deg,#48C1A6,#019272);
+}
+.el-btn-info-mlv::before {
+  content:"";
+  position: absolute;
+  width:100%;
+  background:linear-gradient(0deg,rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.8));
+  border-radius:10px 10px 0 0;
+  display: block;
+  height: 50%;
+  top: 0;
+  left: 0;
+}
+
+// 绿色
+.el-btn-info-lv {
+  position: relative;
+  border-radius:10px;
+  border:1px solid rgba(60, 185, 157, 1);
+  background:linear-gradient(0deg,#74D549,#3FAE6D);
+}
+.el-btn-info-lv::before {
+  content:"";
+  position: absolute;
+  width:100%;
+  background:linear-gradient(0deg,rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.8));
+  border-radius:10px 10px 0 0;
+  display: block;
+  height: 50%;
+  top: 0;
+  left: 0;
+}
+
+// 白色
+.el-btn-info-bs {
+  position: relative;
+  border-radius:10px;
+  border:1px solid rgba(60, 185, 157, 1);
+  background:linear-gradient(0deg,#fff,#E7E7E7);
+}
+.el-btn-info-bs::before {
+  content:"";
+  position: absolute;
+  width:100%;
+  background:linear-gradient(0deg,rgba(255, 255, 255, .2), rgba(230, 230, 230, .8));
+  border-radius:10px 10px 0 0;
+  display: block;
+  height: 50%;
+  top: 0;
+  left: 0;
+}
+
+// 紫色
+.el-btn-info-purple {
+  position: relative;
+  border-radius:10px;
+  background:linear-gradient(90deg,rgba(197, 35, 231, 1),rgba(124, 149, 255, 1));
+}
+.el-btn-info-purple::before {
+  content:"";
+  position: absolute;
+  width:100%;
+  background:linear-gradient(0deg,rgba(142, 183, 219, 0.23), rgba(255, 255, 255, 0.23));
+  border-radius:10px 10px 0 0;
+  display: block;
+  height: 50%;
+  top: 0;
+  left: 0;
+}
+
+// 天蓝
+.el-btn-info-lightBlue {
+  cursor: pointer;
+  position: relative;
+  border-radius:10px;
+  background:linear-gradient(180deg,rgba(9, 154, 221, 1),rgba(109, 214, 233, 1));
+}
+.el-btn-info-lightBlue::before {
+  content:"";
+  position: absolute;
+  width:100%;
+  background:linear-gradient(0deg,rgba(142, 183, 219, 0.3), rgba(255, 255, 255, 0.8));
+  border-radius:10px 10px 0 0;
+  display: block;
+  height: 50%;
+  top: 0;
+  left: 0;
+}
+
+// 天蓝
+.el-btn-info-yellow {
+  position: relative;
+  border-radius:10px;
+  background:linear-gradient(90deg,rgba(218, 118, 0, 1),rgba(218, 118, 0, 1));
+}
+.el-btn-info-yellow::before {
+  content:"";
+  position: absolute;
+  width:100%;
+  background:linear-gradient(0deg,rgba(142, 183, 219, 0.23), rgba(255, 255, 255, 0.23));
+  border-radius:10px 10px 0 0;
+  display: block;
+  height: 50%;
+  top: 0;
+  left: 0;
 }
 
 .el-btn-info {
@@ -40,8 +154,9 @@
   border-width:8px 8px 8px 0;
   border-style:solid;
   border-color:transparent #777F8F transparent transparent;/*透明 灰 透明 透明 */
-  box-shadow:0px 1px 0px 0px rgba(255,255,255,1);
 }
+
+
 
 .el-textarea {
   background:rgba(255,255,255,1);
@@ -53,4 +168,23 @@
   padding:19px 22px 54px 20px;
   box-sizing: border-box;
   font-size: 14px;
+}
+
+
+// 输入框上下选选择
+.select-triangle-top{
+  width:0;
+  height:0;
+	border-right:4px solid transparent;
+	border-left:4px solid transparent;
+  border-bottom:4px solid #4EB4CC;
+  top: 6px;
+}
+.select-triangle-bottom{
+  width:0;
+  height:0;
+	border-right:4px solid transparent;
+	border-left:4px solid transparent;
+  border-top:4px solid #4EB6CC;
+  bottom: 6px;
 }

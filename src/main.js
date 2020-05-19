@@ -10,12 +10,16 @@ import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
 import './assets/css/icon.css';
 import './assets/css/reset-theme.scss';
 import './components/common/directives';
+import elInput from './components/common/elInput';
+import timeRoll from './components/common/timeRoll';
 import './utils/rem';
 // import 'babel-polyfill';
 
 //------------ 全局配置组件 开始 -----------------
 import uploadFile from '@/components/common/uploadFile'   //导入组件
 Vue.component('uploadFile', uploadFile)
+Vue.component('elInput', elInput)
+Vue.component('timeRoll', timeRoll)
 //------------ 全局配置组件 结束 -----------------
 
 

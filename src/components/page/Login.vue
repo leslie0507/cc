@@ -1,11 +1,12 @@
 <template>
     <div class="login-wrap">
+        <div class="bg-img"></div>
         <div class="loading-img">
             <div class="title">登录</div>
             <div class="input-wrapper">
                 <input class="el-input password" type="text">
                 <div class="bth-wrapper">
-                    <button class="el-btn btn-1">
+                    <button class="el-btn el-btn-info-bs btn-1">
                         <span class="triangle-left"></span>
                         返回
                     </button>
@@ -87,10 +88,12 @@ export default {
 .btn-1 {
     width:98px;
     height:46px;
+    border:1px solid rgba(179, 179, 179, 1);
 }
 .btn-2 {
     width:142px;
     height:46px;
+    color: rgba(255, 255, 255, 1);
 }
 .password {
     width:250px;height:40px;
@@ -102,6 +105,17 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    .bg-img {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -8;
+        width: 100%;
+        height: 100%;
+        background: url('../../assets/icons/background.png') no-repeat center center;
+        background-size: cover;
+        filter: blur(10px);
+    }
     .loading-img {
         width:400px;
         height:274px;
@@ -130,7 +144,7 @@ export default {
             justify-content: center;
             align-items: center;
             background:linear-gradient(0deg,rgba(230,230,230,1),rgba(255,255,255,1));
-            box-shadow:0px 2px 4px 0px rgba(12,3,6,0.1), 0px -8px 18px 0px rgba(255,255,255,0.9);
+            // box-shadow:0px 2px 4px 0px rgba(12,3,6,0.1), 0px -8px 18px 0px rgba(255,255,255,0.9);
             border-radius:8px 8px 0 0;
             font-size:24px;
             font-weight:bold;

@@ -10,26 +10,19 @@ export default new Router({
             redirect: '/clewManage'
         },
         {
-            path: '/',
-            component: resolve=>(require(["../components/common/Home.vue"],resolve)),
-            meta: { title: 'home' },
-            children: [
-                {
-                    path: '/clewManage',
-                    component: resolve=>(require(["../components/page/clewManage/index.vue"],resolve)),
-                    meta: { title: '线索管理' }
-                },
-                {
-                    path: '/404',
-                    component: resolve=>(require(["../components/page/404.vue"],resolve)),
-                    meta: { title: '404' }
-                }
-            ]
-        },
-        {
             path: '/editCase',
             component: resolve=>(require(["../components/page/editCase.vue"],resolve)),
             meta: { title: '编辑病例' }
+        },
+        {
+            path: '/monitorCase',
+            component: resolve=>(require(["../components/page/monitorCase.vue"],resolve)),
+            meta: { title: '监护病例' }
+        },
+        {
+            path: '/monitor',
+            component: resolve=>(require(["../components/page/monitor.vue"],resolve)),
+            meta: { title: '实时监护' }
         },
         {
             path: '/login',
