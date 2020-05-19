@@ -7,7 +7,7 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/clewManage'
+            redirect: '/setting'
         },
         {
             path: '/editCase',
@@ -28,6 +28,21 @@ export default new Router({
             path: '/login',
             component: resolve=>(require(["../components/page/login.vue"],resolve)),
             meta: { title: '登录' }
+        },
+        {
+            path: '/setting',
+            component: resolve=>(require(["../components/page/setting.vue"],resolve)),
+            meta: { title: '设置' }
+        },
+        {
+            path: '/setting-time',
+            component: resolve=>(require(["../components/page/setting-time.vue"],resolve)),
+            meta: { title: '时间设置' }
+        },
+        {
+            path: '/setting-user',
+            component: resolve=>(require(["../components/page/setting-user.vue"],resolve)),
+            meta: { title: '用户设置' }
         },
         {
             path: '/loading',
