@@ -35,14 +35,34 @@ export default new Router({
             meta: { title: '设置' }
         },
         {
-            path: '/setting-time',
-            component: resolve=>(require(["../components/page/setting-time.vue"],resolve)),
+            path: '/settingTime',
+            component: resolve=>(require(["../components/page/settingTime.vue"],resolve)),
             meta: { title: '时间设置' }
         },
         {
-            path: '/setting-user',
-            component: resolve=>(require(["../components/page/setting-user.vue"],resolve)),
+            path: '/settingUser',
+            component: resolve=>(require(["../components/page/settingUser.vue"],resolve)),
             meta: { title: '用户设置' }
+        },
+		{
+		    path: '/checkParams',
+		    component: resolve=>(require(["../components/page/checkParams.vue"],resolve)),
+		    meta: { title: '检测参数' }
+		},
+        {
+            path: '/checkStart',
+            component: resolve=>(require(["../components/page/checkStart.vue"],resolve)),
+            meta: { title: '检测开始' }
+        },
+        {
+            path: '/checkOn',
+            component: resolve=>(require(["../components/page/checkOn.vue"],resolve)),
+            meta: { title: '检测中' }
+        },
+        {
+            path: '/checkResult',
+            component: resolve=>(require(["../components/page/checkResult.vue"],resolve)),
+            meta: { title: '检测结果' }
         },
         {
             path: '/loading',

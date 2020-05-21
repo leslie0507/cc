@@ -2,24 +2,39 @@
     <div class="login-wrap">
         <div class="loading-img">
             <div class="title">
-                <div class="title-text">用户设置</div>
+                <div class="title-text">设置</div>
                 <button class="el-btn btn-1 btn-back">
                     <span class="triangle-left"></span>
                     返回
                 </button>
             </div>
-            <!-- 设置用户信息区域-->
-            <div class="setting-user-wrapper">
+            <!-- 设置信息区域-->
+            <div class="setting-time-wrapper">
+                <!-- 文本框区域 -->
                 <div class="input-wrapper">
-                    <div class="hosp-name">
-                        <span>医院名称</span>
-                        <input class="el-input setting-user-input" type="text" />
+                    <div>
+                        <input class="el-input setting-time-input" type="text" />
                     </div>
-
-                    <div class="user-pwd">
-                        <span>用户密码</span>
-                        <input class="el-input setting-user-input" type="password" />
+                    <div>
+                        <input class="el-input setting-time-input" type="text" />
                     </div>
+                    <div>
+                        <input class="el-input setting-time-input" type="text" />
+                    </div>
+                    <div>
+                        <input class="el-input setting-time-input" type="text" />
+                    </div>
+                    <div>
+                        <input class="el-input setting-time-input" type="text" />
+                    </div>
+                </div>
+                <!-- 时间显示区域 -->
+                <div class="time-show-wrapper">
+                    <p>2014/9/5 15:55</p>
+                </div>
+                <!-- 按钮区域 -->
+                <div class="btn-wrapper">
+                    <button class="el-btn btn-save">保存修改</button>
                 </div>
             </div>
         </div>
@@ -99,20 +114,14 @@ export default {
     width: 142px;
     height: 46px;
 }
-.setting-user-input {
+// 输入框大小
+.setting-time-input {
     width: 274px;
     height: 50px;
-    margin-left: 14px;
+   
 }
 // 重置文本框内容的输入样式
 input[type='text'] {
-    font-size: 24px;
-    color: rgba(153, 153, 153, 1);
-    // 去掉浏览器默认input内容样式
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-input[type='password'] {
     font-size: 24px;
     color: rgba(153, 153, 153, 1);
     // 去掉浏览器默认input内容样式
@@ -127,20 +136,17 @@ input[type='password'] {
     align-items: center;
     .loading-img {
         width: 504px;
-        height: 290px;
+        height: 586px;
+        
         background: #e1ecef;
 
         box-shadow: 0px 4px 10px 0px rgba(12, 3, 6, 0.2);
         border-radius: 8px;
-        .bth-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
+        
 
         .title {
-            width: 504px;
+             width: 100%;
+           
             height: 60px;
             display: flex;
             justify-content: center;
@@ -157,32 +163,59 @@ input[type='password'] {
             position: relative;
             // 返回按钮定位
             .btn-back {
+                width: 98px;
+                height: 48px;
                 position: absolute;
                 top: 6px;
                 right: 20px;
+                color: rgba(119, 127, 143, 1);
+                background: url(../../assets/icons/back-btn.png) no-repeat;
+                background-size: cover;
             }
         }
-        .setting-user-wrapper {
-            width: 504px;
-            height: 230px;
+        .setting-time-wrapper {
+             width: 100%;
+            
 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            font-family: Microsoft YaHei;
-            color: rgba(153, 153, 153, 1);
             .input-wrapper {
+                 width: 100%;
+               
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                padding: 38px 0 15px 0;
                 div {
-                    width: 464px;
-                    padding: 18px 0;
-                    span {
-                        padding-left: 44px;
-                    }
+                    margin-bottom: 20px;
                 }
-                div:last-of-type {
-                    border-top: 1px solid rgba(204, 204, 204, 1);
+            }
+            .time-show-wrapper {
+                 width: 100%;
+                
+                font-size: 30px;
+                color: rgba(51, 153, 102, 1);
+                text-align: center;
+            }
+            .btn-wrapper {
+               
+                
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                
+                padding:27px 20px 20px 0;
+                .btn-save {
+                    width: 128px;
+                    height: 40px;
+                    background: url(../../assets/icons/blue-btn.png) no-repeat;
+					background-size: cover;
+                    font-size: 18px;
+                    color: rgba(255, 255, 255, 1);
+                    // background-color: forestgreen;
+                    line-height: 40px;
+					font-weight: bold;
+                   
+                   
                 }
             }
         }
