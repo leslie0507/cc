@@ -27,8 +27,18 @@ export default new Router({
         {
             path: '/login',
             component: resolve=>(require(["../components/page/login.vue"],resolve)),
-            meta: { title: '登录' }
+            meta: { title: '密码登录框' }
         },
+		{
+			path: '/loginBox',
+			component: resolve=>(require(["../components/page/loginBox.vue"],resolve)),
+			meta: { title: '登录框' }
+		},
+		{
+			path: '/noteInfo',
+			component: resolve=>(require(["../components/page/noteInfo.vue"],resolve)),
+			meta: { title: '登录框' }
+		},
         {
             path: '/setting',
             component: resolve=>(require(["../components/page/setting.vue"],resolve)),
@@ -69,6 +79,16 @@ export default new Router({
             component: resolve=>(require(["../components/page/loadingPage.vue"],resolve)),
             meta: { title: '登录' }
         },
+		{		
+			path: '/clinicalCase',
+			component: resolve=>(require(["../components/page/clinicalCase.vue"],resolve)),
+			meta: { title: '临床病历' }			
+		},
+		{
+			path: '/clinicalCase-unknown',
+			component: resolve=>(require(["../components/page/clinicalCase-unknown.vue"],resolve)),
+			meta: { title: '临床病历-未知' }			
+		},
         {
             path: '*',
             redirect: '/404'

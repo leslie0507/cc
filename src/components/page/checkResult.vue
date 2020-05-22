@@ -265,7 +265,10 @@
 
 			.check-result-wrapper {
 				width: 100%;
-
+				height:358px;
+				padding:20px;
+				//c3盒子
+				box-sizing: border-box;
 				// background: blue;
 				display: flex;
 				flex-direction: column;
@@ -275,21 +278,24 @@
 				.result-info {
 					width: 472px;
 					height: 258px;
-					margin: 22px 20px;
+					padding-left:19px;
+					padding-right:26px;
+					box-sizing: border-box;
+			
 					// 使用背景图
 					background: url(../../assets/icons/w-box.png) no-repeat;
 					background-size: cover;
+					
 					display: flex;
 					flex-direction: column;
 					
 					
 
 					.info-item {
-						margin:0 26px 0 19px;
 						padding:12px 0;
-						// background: green;
-						// width: 100%;
-						// 背景有2px的右边阴影故470
+						
+						
+						
 						width:419px;
 						display: flex;
 						justify-content: space-between;
@@ -300,11 +306,15 @@
 						color: rgba(191, 191, 191, 1);
 
 						.left-name {
+							// background-color: red;
+							margin-left: 10px;
 							font-size: 24px;
 							display: flex;
 	
 							flex-direction: column;
 							align-items:flex-start;
+							// text-align: center;
+							justify-content: center;
 							
 						}
 						.item-selected-wrapper{
@@ -316,12 +326,8 @@
 							justify-content: center;
 							align-items: center;
 							.item-selected{
-								// background: blue;
-								// margin: 0 auto;
-								// text-align:center;
 								display: flex;
-								// flex-direction: column;
-								// justify-content: flex-start;
+								
 								align-items: center;
 								font-size:18px;
 								span{
@@ -342,6 +348,8 @@
 				.btn-wrapper {
 					width: 464px;
 					display: flex;
+					// 距离上面盒子
+					margin-top: 20px;
 					justify-content: space-between;
 					align-items: center;
 					button {
