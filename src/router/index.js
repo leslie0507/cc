@@ -15,6 +15,11 @@ export default new Router({
             meta: { title: '编辑病例' }
         },
         {
+            path: '/testResult',
+            component: resolve=>(require(["../components/page/testResult.vue"],resolve)),
+            meta: { title: '检测结果' }
+        },
+        {
             path: '/monitorCase',
             component: resolve=>(require(["../components/page/monitorCase.vue"],resolve)),
             meta: { title: '监护病例' }
