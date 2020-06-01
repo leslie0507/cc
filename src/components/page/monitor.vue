@@ -118,6 +118,8 @@
                                 </div>
                                 <div class="value">25</div>
                             </div>
+
+                            <div class="text-info">*排除开颅、肿瘤</div>
                         </div>
                     </div>
                     <div class="right"></div>
@@ -259,6 +261,11 @@ export default {
     }
     .left {
         .left-item-wrapper {
+            .text-info {
+                font-size:14px;
+                font-weight:400;
+                color:rgba(1,146,114,1);
+            }
             .left-item {
                 &:not(:last-child) {
                     margin-bottom: 10px;
