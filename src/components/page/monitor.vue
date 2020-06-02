@@ -82,38 +82,38 @@
                         </div>
 
                         <div class="left-item-wrapper">
-                            <div class="left-item el-btn-info-purple">
+                            <div class="left-item">
                                 <div class="text-werapper">
                                     <div>扰动系数</div>
-                                    <div>Brain Edema</div>
-                                    <div>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
+                                    <div style="width:100%;text-align:left;">Brain Edema</div>
+                                    <div style="width:100%;text-align:left;" class="icon-wrapper">
+                                        <img src="../../assets/img/boen/b-l.png" alt="">
+                                        <img src="../../assets/img/boen/b-m.png" alt="">
+                                        <img src="../../assets/img/boen/b-r.png" alt="">
                                     </div>
                                 </div>
                                 <div class="value">30</div>
                             </div>
-                            <div class="left-item el-btn-info-lightBlue">
+                            <div class="left-item">
                                 <div class="text-werapper">
                                     <div>水肿量</div>
-                                    <div>Brain Edema</div>
-                                    <div>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
+                                    <div style="width:100%;text-align:left;">Brain Edema</div>
+                                    <div style="width:100%;text-align:left;" class="icon-wrapper">
+                                        <img src="../../assets/img/boen/b-l.png" alt="">
+                                        <img src="../../assets/img/boen/b-m.png" alt="">
+                                        <img src="../../assets/img/boen/b-r.png" alt="">
                                     </div>
                                 </div>
                                 <div class="value">66</div>
                             </div>
-                            <div class="left-item el-btn-info-yellow">
+                            <div class="left-item">
                                 <div class="text-werapper">
                                     <div>颅内压</div>
-                                    <div>Brain Edema</div>
-                                    <div>
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
+                                    <div style="width:100%;text-align:left;">Brain Edema</div>
+                                    <div style="width:100%;text-align:left;" class="icon-wrapper">
+                                        <img src="../../assets/img/boen/b-l.png" alt="">
+                                        <img src="../../assets/img/boen/b-m.png" alt="">
+                                        <img src="../../assets/img/boen/b-r.png" alt="">
                                     </div>
                                 </div>
                                 <div class="value">25</div>
@@ -122,7 +122,18 @@
                             <div class="text-info">*排除开颅、肿瘤</div>
                         </div>
                     </div>
-                    <div class="right"></div>
+                    <div class="right">
+                        <div class="right-t">
+
+                        </div>
+                        
+                        <!--- 图表 ---->
+                        <div class="right-chart">
+                            <div id="chart1"></div>
+                            <div id="chart2"></div>
+                            <div id="chart3"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -173,9 +184,129 @@ export default {
     },
     mounted(){
         this.curStartTime = '2020-08-09'
-        this.countTime()
+        this.countTime();
+        this.drawChatOne('rgba(197, 35, 231, 1)','rgba(197, 35, 231, 0)','chart1');
+        this.drawChatOne('rgba(60, 167, 230, 1)','rgba(60, 167, 230, 0)','chart2');
+        this.drawChatOne('rgba(247, 187, 87, 1)','rgba(247, 187, 87, 0)','chart3');
     },
     methods: {
+        drawChatOne(color,color1,id){
+            console.log(this.$echarts)
+            var myChartLine = this.$echarts.init(document.getElementById(id));
+            let optionLine =  {
+                animation: false,
+                tooltip: {
+                    trigger: 'axis'
+                },
+                lineStyle:{
+                    normal:{
+                        color:'#32A8FF'
+                    }
+                },
+                areaStyle:{
+                    normal:{
+                    //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+                        color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
+
+                            offset: 0,
+                            color: 'rgba(80,141,255,0.39)'
+                        }, {
+                            offset: .34,
+                            color: 'rgba(56,155,255,0.25)'
+                        },{
+                            offset: 1,
+                            color: 'rgba(38,197,254,0.00)'
+                        }])
+
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '2%',
+                    bottom: '2%',
+                    top:'10',
+                    containLabel: true
+                },
+                xAxis: {
+                    splitLine: {
+                        show: true,
+                    },
+                    type: 'category',
+                    boundaryGap:false,
+                    label: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {//y轴文字的配置
+                        show: false
+                    },
+                    axisLine: {//y轴线的颜色以及宽度
+                        show: true,
+                        lineStyle: {
+                            color: color,
+                            width: 2,
+                            type: "solid"
+                        },
+                    },
+                    data:['11.07','11.08','11.09','11.10','11.11','11.12']
+                },
+                yAxis: {
+                    type: 'value',
+                    splitLine: {
+                        show: true
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                     axisLabel: {//y轴文字的配置
+                        textStyle: {
+                            color: "rgba(86, 98, 120, 1)",
+                        },
+                    },
+                    axisLine: {//y轴线的颜色以及宽度
+                        show: true,
+                        lineStyle: {
+                            color: color,
+                            width: 2,
+                            type: "solid"
+                        },
+                    },
+                    min:0,
+                    max:250,
+                    splitNumber:6
+                },
+                series: [
+                    {
+                        name:'浏览次数',
+                        type:'line',
+                        stack: '总量1',
+                        symbol: 'circle',
+                        symbolSize: 5,
+                        sampling: 'average',
+                        itemStyle: {
+                            color: 'rgba(197, 35, 231, .7)'
+                        },
+                        areaStyle: {normal: {}},
+                        data:['50','220','100','50','130','139','150','100','220','100'],
+                        itemStyle: {
+                            normal: {
+                                color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                    offset: 0,
+                                    color: color //'rgba(197, 35, 231, 1)'
+                                }, {
+                                    offset: 1,
+                                    color: color1
+                                }]),
+                                opacity: 1,
+                            }
+                        }
+                    }
+                ]
+            }
+            myChartLine.setOption(optionLine);
+        },
         // 倒计时
         countTime () {
             // 获取当前时间
@@ -213,40 +344,15 @@ export default {
                 setTimeout(this.countTime, 1000)
             }
         },　
-        submitForm() {
-           
-            this.$refs.login.validate(valid => {
-                if (valid) {
-                    Login({
-                        account:this.param.username,
-                        pwd:this.param.password
-                    }).then(res => {
-                        console.log(this.respSuccess(res))
-                        if(!this.respSuccess(res)){
-                            this.resNotice.warning(res.msg,this.respMessage(res))
-                            return
-                        }
-                        sessionStorage.setItem('ms_user', JSON.stringify(res.data));
-                        queryPostList().then(res=>{
-                            sessionStorage.setItem('expressList', JSON.stringify(res.data));
-                            sessionStorage.setItem('userName', this.param.username);
-                            this.$router.push('/');
-                        })
-                        
-                    }).catch(err=>{
-                        console.log(err)
-                    })
-                } else {
-                    console.log('error submit!!');
-                    return false;
-                }
-            });
-        },
     },
 };
 </script>
 
 <style lang="scss" scoped>
+#chart1 {
+    width: 100%;
+    height: 250px;
+}
 /deep/ .monitor {
     input {
         width: 60px;
@@ -257,6 +363,23 @@ export default {
 }
 .container {
     .right {
+        .right-chart {
+            height: calc(100% - 53px);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: column;
+            div {
+                flex: 1;
+                width: 100%;
+            }
+        }
+        .right-t {
+            height: 53px;
+            width: 100%;
+            padding-left: 44px;
+        }
         flex: 1;
     }
     .left {
@@ -270,6 +393,18 @@ export default {
                 &:not(:last-child) {
                     margin-bottom: 10px;
                 }
+                &:nth-child(1) {
+                    background-image: url('../../assets/img/boen/bg-3.png');
+                    background-size: cover;
+                }
+                &:nth-child(2) {
+                    background-image: url('../../assets/img/boen/bg-1.png');
+                    background-size: cover;
+                }
+                &:nth-child(3) {
+                    background-image: url('../../assets/img/boen/bg-2.png');
+                    background-size: cover;
+                }
                 padding: 0 20px 0 30px;
                 box-sizing: border-box;
                 display: flex;
@@ -281,6 +416,14 @@ export default {
                     color: #fff;
                 }
                 .text-werapper {
+                    .icon-wrapper {
+                        margin-top: 10px;
+                        width: 100%;
+                        padding-right: 30px;
+                        box-sizing: border-box;
+                        display: flex;
+                        justify-content: space-between;
+                    }
                     div {
                         &:nth-child(1) {
                             color: rgba(255, 255, 255, 1);
