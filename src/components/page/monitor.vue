@@ -416,6 +416,11 @@ export default {
                     color: #fff;
                 }
                 .text-werapper {
+                    div {
+                        &:nth-child(1){
+                            width: 105px;
+                        }
+                    }
                     .icon-wrapper {
                         margin-top: 10px;
                         width: 100%;
