@@ -2,7 +2,8 @@
     <div class="select-wrapper">
         <span>{{label}}</span>
         <div class="select-input-wrapper">
-            <input type="number" :style="{'width':width+'px'}" v-model="newValue">
+            <input type="number" maxlength="3" :style="{'width':width+'px'}" v-model="newValue">
+            <div class="bg"></div>
             <div class="select-triangle select-triangle-top"></div>
             <div class="select-triangle select-triangle-bottom"></div>
         </div>
@@ -39,6 +40,15 @@ export default {
 }
 .select-input-wrapper {
   position: relative;
+  .bg {
+    height: 90%;
+    width: 14px;
+    position: absolute;
+    right: 3%;
+    top: 4%;
+    border-radius: 5px;
+    background-color: #fff;
+  }
   input {
     height:25px;
     width: 78px;

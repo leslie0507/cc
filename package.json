@@ -20,6 +20,7 @@
     "element-ui": "^2.11.0",
     "image-webpack-loader": "^6.0.0",
     "mavon-editor": "^2.6.17",
+    "moment": "^2.26.0",
     "node-sass": "^4.13.1",
     "postcss-px2rem": "^0.3.0",
     "px2rem-loader": "^0.1.9",

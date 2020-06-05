@@ -132,13 +132,6 @@
                             <div id="chart1"></div>
                             <div id="chart2"></div>
                             <div id="chart3"></div>
-                            <div class="time-text">
-                                <div v-for="i in 7" class="text-1">
-                                    <span>10:52</span>
-                                    <span>06-03</span>
-                                </div>
-                                <div class="time-label">时间</div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -149,7 +142,6 @@
 </template>
 
 <script>
-import moment from 'moment';
 import { Login } from '@/api/user';
 import { queryPostList } from '@/api/data';
 let passwordRule = (rule, value, callback)=>{
@@ -162,15 +154,6 @@ let passwordRule = (rule, value, callback)=>{
 export default {
     data: function() {
         return {
-            websock: null,//建立的连接
-            lockReconnect: false,//是否真正建立连接
-            timeout: 5*1000,//30秒一次心跳
-            timeoutObj: null,//心跳心跳倒计时
-            serverTimeoutObj: null,//心跳倒计时
-            timeoutnum: null,//断开 重连倒计时
-            chartData:[],
-            chartTime:[],
-
             elName:'',
             curStartTime: '2019-07-31 08:00:00',
             day: '0',
@@ -196,254 +179,69 @@ export default {
     created(){
         sessionStorage.removeItem('ms_user');
         this.param.username = sessionStorage.getItem('userName');
-        this.initWebSocket();
-    },
-    destroyed: function() {
-        //页面销毁时关闭长连接
-        this.websocketclose();
+        
+        
     },
     mounted(){
         this.curStartTime = '2020-08-09'
         this.countTime();
-        
+        this.drawChatOne('rgba(197, 35, 231, 1)','rgba(197, 35, 231, 0)','chart1');
+        this.drawChatOne('rgba(60, 167, 230, 1)','rgba(60, 167, 230, 0)','chart2');
+        this.drawChatOne('rgba(247, 187, 87, 1)','rgba(247, 187, 87, 0)','chart3');
     },
     methods: {
-        initWebSocket(){//建立连接
-            //初始化weosocket
-            //const wsuri = "ws://sms.填写您的地址.com/websocket/" + this.charId; //ws地址
-           const wsuri = "ws://127.0.0.1:5000/WebSocketGd" 
-           //建立连接
-            this.websock = new WebSocket(wsuri);
-            //连接成功
-            this.websock.onopen = this.websocketonopen;
-            //连接错误
-            this.websock.onerror = this.websocketonerror;
-            //接收信息
-            this.websock.onmessage = this.websocketonmessage;
-            //连接关闭
-            this.websock.onclose = this.websocketclose;
-        },
-        reconnect() {//重新连接
-            var that = this;
-            if(that.lockReconnect) {
-                return;
-            };
-            that.lockReconnect = true;
-            //没连接上会一直重连，设置延迟避免请求过多
-            that.timeoutnum && clearTimeout(that.timeoutnum);
-            that.timeoutnum = setTimeout(function () {
-                //新连接
-                that.initWebSocket();
-                that.lockReconnect = false;
-            },5000);
-        },
-        reset(){//重置心跳
-            var that = this;
-            //清除时间
-            clearTimeout(that.timeoutObj);
-            clearTimeout(that.serverTimeoutObj);
-            //重启心跳
-            that.start();
-        },
-        start(){//开启心跳
-            var self = this;
-            self.timeoutObj && clearTimeout(self.timeoutObj);
-            self.serverTimeoutObj && clearTimeout(self.serverTimeoutObj);
-            self.timeoutObj = setTimeout(function(){
-                //这里发送一个心跳，后端收到后，返回一个心跳消息，
-                if (self.websock.readyState == 1) {//如果连接正常
-                    self.websock.send(JSON.stringify({ 'status': true }));
-                }else{//否则重连
-                    self.reconnect();
-                }
-                self.serverTimeoutObj = setTimeout(function() {
-                    //超时关闭
-                    self.websock.close();
-                }, self.timeout);
-
-            }, self.timeout)
-        },
-        websocketonopen() {//连接成功事件
-            //开启心跳
-            this.start();
-        },
-        
-        websocketonerror(e) {//连接失败事件
-            //错误
-            console.log("WebSocket连接发生错误");
-            //重连
-            this.reconnect();
-        },
-        websocketclose(e) {//连接关闭事件
-            //关闭
-            console.log( e );
-            //重连
-            this.reconnect();
-        },
-        // BNPerturbValue   扰动系数
-        // BNEdemaValue   水肿系数
-        // BNICPValue   颅内压
-        websocketonmessage(event) {//接收服务器推送的信息
-            //打印收到服务器的内容
-            console.log(JSON.parse(event.data));
-            let resData = JSON.parse(event.data);
-            
-            if(!resData.hasOwnProperty('status')) {
-                let item = JSON.parse(resData[0]);
-                item.dateTime = moment(item.datetime).format("YYYY-MM-DD HH:mm:ss");
-                item.secondTime = moment(item.datetime).format("mm:ss");
-                this.chartTime.push(item.dateTime);
-                this.chartData.push(item);
-                this.drawChart();
+        drawChatOne(color,color1,id){
+            var totalFlowRate = this.$echarts.init(document.getElementById(id));
+            var xAxisData=[];
+            var yAxisData=[];
+            for(var i=500 ;i>0;i--){
+                xAxisData.push(i+"秒前");
             }
-            console.log(this.chartData)
-            //收到服务器信息，心跳重置
-            this.reset();
-        },
-        websocketsend(msg) {//向服务器发送信息
-            //数据发送
-            this.websock.send(msg);
-        },
-        drawChart(){
-            this.drawChatOne('rgba(197, 35, 231, 1)','rgba(197, 35, 231, 0)','chart1','EdemaValue');
-            this.drawChatOne('rgba(60, 167, 230, 1)','rgba(60, 167, 230, 0)','chart2','ICPValue');
-            this.drawChatOne('rgba(247, 187, 87, 1)','rgba(247, 187, 87, 0)','chart3','PerturbValue');
-        },
-        drawChatOne(color,color1,id,type){
-            let xData = this.chartTime.slice(-7);
-            let yData = this.chartData.slice(-7);
-            let yDataValue = [];
-            yData.map(item=>{
-                console.log(item[type],type,item)
-                yDataValue.push(item[type]*1*Math.random())
-            })            
-            console.log(xData,yDataValue)
-            var myChartLine = this.$echarts.init(document.getElementById(id));
-            let optionLine =  {
-                animation: false,
-                tooltip: {
-                    trigger: 'axis'
-                },
-                lineStyle:{
-                    normal:{
-                        color:'#32A8FF'
-                    }
-                },
-                areaStyle:{
-                    normal:{
-                    //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
-                        color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
-
-                            offset: 0,
-                            color: 'rgba(80,141,255,0.39)'
-                        }, {
-                            offset: .34,
-                            color: 'rgba(56,155,255,0.25)'
-                        },{
-                            offset: 1,
-                            color: 'rgba(38,197,254,0.00)'
-                        }])
-
-                    }
+            for(i=1;i<501;i++){
+                yAxisData.push(Math.round(Math.random()*1000));
+            }
+            var totalFlowRateOption = {
+                animation:false,
+                title: {
+                    text: '总流量（kbps）'/*,
+                    left:"110px"*/
                 },
                 grid: {
-                    left: '3%',
-                    right: '2%',
-                    bottom: '2%',
-                    top:'10',
-                    containLabel: true
+                    left: 50/*"50px"*/,
+                    right: 15/*"15px"*/
+                },
+                legend: {
+                    data:['当前流量']
                 },
                 xAxis: {
-                    splitLine: {
-                        show: true,
-                    },
-                    type: 'category',
-                    boundaryGap:false,
-                    label: {
-                        show: false
-                    },
-                    axisTick: {
-                        show: false
-                    },
-                    axisLabel: {//y轴文字的配置
-                        show: false
-                    },
-                    axisLine: {//y轴线的颜色以及宽度
-                        show: true,
-                        lineStyle: {
-                            color: color,
-                            width: 2,
-                            type: "solid"
-                        },
-                    },
-                    splitNumber:6,
-                    data:xData
+                    boundaryGap: false,
+                    data: xAxisData
                 },
                 yAxis: {
-                    type: 'value',
-                    splitLine: {
-                        show: true
-                    },
-                    axisTick: {
-                        show: false
-                    },
-                    axisLabel: {//y轴文字的配置
-                        textStyle: {
-                            fontSize: '14',
-                            color: "rgba(86, 98, 120, 1)",
-                        },
-                    },
-                    axisLine: {//y轴线的颜色以及宽度
-                        show: true,
-                        lineStyle: {
-                            color: color,
-                            width: 2,
-                            type: "solid"
-                        },
-                    },
-                    min:0,
-                    max:250,
-                    splitNumber:6
+                    boundaryGap:false
                 },
-                series: [
-                    {
-                        name:'浏览次数',
-                        type:'line',
-                        stack: '总量1',
-                        symbol: 'circle',
-                        symbolSize: 5,
-                        sampling: 'average',
-                        itemStyle: {
-                            color: 'rgba(197, 35, 231, .7)'
-                        },
-                        markLine: {
-                            symbol: ['none', 'none'],
-                            label: {show: false},
-                            data: [
-                                {xAxis: 2},
-                                {xAxis: 3},
-                                {xAxis: 5},
-                                {xAxis: 7}
-                            ]
-                        },
-                        areaStyle: {normal: {}},
-                        data:yDataValue,
-                        itemStyle: {
-                            normal: {
-                                color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                    offset: 0,
-                                    color: color //'rgba(197, 35, 231, 1)'
-                                }, {
-                                    offset: 1,
-                                    color: color1
-                                }]),
-                                opacity: 1,
+                series: {
+                    symbol:"none",/*去掉小圆点*/
+                    name: '当前流量',
+                    type: 'line',
+                    itemStyle : {
+                        normal : {
+                            lineStyle:{
+                                width:2,//折线宽度
+                                color:"#FF0000"//折线颜色
                             }
                         }
-                    }
-                ]
-            }
-            myChartLine.setOption(optionLine);
+                    },
+                    data: yAxisData/*,
+                    smooth:true//0-1之间的数字或true或false，显示为平滑的曲线*/
+                }
+            };
+            totalFlowRate.setOption(totalFlowRateOption);
+            setInterval(function(){
+                yAxisData.push(Math.round(Math.random()*1000));
+                yAxisData.shift();
+                totalFlowRate.setOption(totalFlowRateOption);
+            },100);
         },
         // 倒计时
         countTime () {
@@ -502,27 +300,6 @@ export default {
 .container {
     .right {
         .right-chart {
-            .time-text {
-                .time-label{
-                    flex:0 0 20px;
-                    text-align: right;
-                    font-size: 14px;
-                    color: rgba(1, 146, 114, 1);
-                }
-                .text-1 {
-                    flex:0 0 40px;
-                    color: rgba(86, 98, 120, 1);
-                    display: flex;
-                    justify-content: space-between;
-                    flex-direction: column;
-                    align-items: center;
-                }
-                flex:0 0 22px;
-                font-size: 14px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
             height: calc(100% - 53px);
             width: 100%;
             display: flex;
@@ -793,7 +570,7 @@ export default {
                         margin-right: 3px;
                     }
                     .value {
-                        color: rgba(1, 146, 114, 1);
+                        color: #4EB6CC;
                     }
                 }
             }
