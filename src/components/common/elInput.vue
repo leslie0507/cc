@@ -1,13 +1,13 @@
 <template>
     <div class="select-wrapper">
-        <span>{{label}}</span>
+        <span  class="label-start">{{label}}</span>
         <div class="select-input-wrapper">
-            <input type="number" maxlength="3" :style="{'width':width+'px'}" v-model="newValue">
+            <input class="select-input" type="number" maxlength="3" :style="{'width':width+'px'}" v-model="newValue">
             <div class="bg"></div>
             <div class="select-triangle select-triangle-top"></div>
             <div class="select-triangle select-triangle-bottom"></div>
         </div>
-        <span>{{endLabel}}</span>
+        <span class="label-end">{{endLabel}}</span>
     </div>
 </template>
 <script>

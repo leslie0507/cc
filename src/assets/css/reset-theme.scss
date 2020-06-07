@@ -1,3 +1,6 @@
+body,html {
+  min-width: 1024px !important;
+}
 input {
   outline: none;
 }
@@ -14,7 +17,7 @@ input {
 }
 
 .el-btn {
-  border-radius:10px;
+  border-radius:8px;
   text-align: center;
   display: flex;
   justify-content: center;

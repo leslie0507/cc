@@ -1,27 +1,40 @@
 <template>
     <div class="time-wrapper">
       <div class="item left">
-        <div class="top select-triangle-top"></div>
-        <div class="middle">5</div>
+        <div class="top select-triangle-top" v-show="showTop"></div>
+        <div class="middle">12</div>
         <div class="bottom select-triangle-bottom"></div>
       </div>
       <div class="item right">
-        <div class="top select-triangle-top"></div>
-        <div class="middle">0</div>
+        <div class="top select-triangle-top" v-show="showTop"></div>
+        <div class="middle">00</div>
         <div class="bottom select-triangle-bottom"></div>
       </div>
     </div>
 </template>
 <script>
 export default {
-    props: ['value']
+    props: {
+      value:{
+        default:1, //1 销售数据 2 物流数据 3 专卖户数据 4 案件数据 5 市管员数据
+      },
+      showTop:{
+        default:true
+      }
+    }
 };
 </script>
 <style lang="scss" scoped>
 .time-wrapper {
+  background: url('../../assets/img/boen/time.png') no-repeat;
+  background-size: cover;
+  background-position: center;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 90px;
+  width:183px; 
+  border-radius:10px;
   .item {
     &:nth-child(1) {
       border-radius:10px 0 0 10px;
@@ -34,22 +47,23 @@ export default {
     line-height: 90px;
     position: relative;
     
-    background:linear-gradient(0deg,rgba(224, 224, 224, 1),rgba(255, 255, 255, 1));
-    &::before {
-      content:"";
-      position: absolute;
-      width:100%;
-      background:linear-gradient(0deg,rgba(255, 255, 255, 1), rgba(255, 255, 255, 1));
-      border-radius:10px 10px 0 0;
-      display: block;
-      height: 50%;
-      top: 0;
-      left: 0;
-    }
+    // background:linear-gradient(0deg,rgba(224, 224, 224, 1),rgba(255, 255, 255, 1));
+    // &::before {
+    //   content:"";
+    //   position: absolute;
+    //   width:100%;
+    //   background:linear-gradient(0deg,rgba(255, 255, 255, 1), rgba(255, 255, 255, 1));
+    //   border-radius:10px 10px 0 0;
+    //   display: block;
+    //   height: 50%;
+    //   top: 0;
+    //   left: 0;
+    // }
     .bottom {
+      cursor: pointer;
       position: absolute;
       left: 50%;
-      bottom: 7px;
+      bottom: 11px;
       transform: translateX(-50%);
       border-right:6px solid transparent;
       border-left:6px solid transparent;
@@ -58,7 +72,7 @@ export default {
     .top {
       position: absolute;
       left: 50%;
-      bottom: 7px;
+      bottom: 11px;
       transform: translateX(-50%);
       border-right:6px solid transparent;
       border-left:6px solid transparent;
@@ -67,21 +81,11 @@ export default {
     .middle {
       position: relative;
       z-index: 2;
-      font-size:58px;
+      font-size:56px;
       color:rgba(135,143,157,1);
     }
-    &:nth-child(1) {
-      border-right: 2px solid #F0F0F0;
-    }
-    &:nth-child(2) {
-      border-left: 2px solid rgba(240,240,240,1);
-    }
   }
-  width:156px;
-  height:90px;
-  background:rgba(255,255,255,0);
   
-  border-radius:10px;
 }
 
 </style>

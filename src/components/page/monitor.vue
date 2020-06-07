@@ -64,7 +64,7 @@
 
                     <div class="save-wrapper">
                         <div class="top">
-                            <img src="" alt="">
+                            <img src="../../assets/img/boen/save.png" alt="">
                             <span>保存</span>
                         </div>
                         <div class="bottom">
@@ -152,13 +152,6 @@
 import moment from 'moment';
 import { Login } from '@/api/user';
 import { queryPostList } from '@/api/data';
-let passwordRule = (rule, value, callback)=>{
-    if(value.length>=6) {
-        callback();
-    }else {
-        callback(new Error('密码长度不能少于6位'));
-    }
-}
 export default {
     data: function() {
         return {
@@ -181,16 +174,7 @@ export default {
             param: {
                 username: '',
                 password: '',
-            },
-            rules: {
-                username: [
-                    { required: true, message: '用户名不能为空', trigger: 'blur' }
-                ],
-                password: [
-                    { required: true, message: '密码不能为空', trigger: 'blur' },
-                    { validator: passwordRule, trigger: 'blur' }
-                ],
-            },
+            }
         };
     },
     created(){
@@ -358,6 +342,7 @@ export default {
                         show: true,
                     },
                     type: 'category',
+                    inverse:true,   //此属性控制方向,默认为false,改为true就达到你要的要求了
                     boundaryGap:false,
                     label: {
                         show: false
@@ -401,32 +386,33 @@ export default {
                             type: "solid"
                         },
                     },
+                    // EdemaValue ICPValue PerturbValue
                     min:0,
-                    max:250,
-                    splitNumber:6
+                    max:type=='EdemaValue'?250:type=='ICPValue'?200:50,
+                    minInterval:type=='EdemaValue'?50:type=='ICPValue'?40:10
                 },
                 series: [
                     {
                         name:'浏览次数',
                         type:'line',
                         stack: '总量1',
-                        symbol: 'circle',
-                        symbolSize: 5,
+                        // symbol: 'circle',
+                        // symbolSize: 5,
                         sampling: 'average',
                         itemStyle: {
                             color: 'rgba(197, 35, 231, .7)'
                         },
-                        markLine: {
-                            symbol: ['none', 'none'],
-                            label: {show: false},
-                            data: [
-                                {xAxis: 2},
-                                {xAxis: 3},
-                                {xAxis: 5},
-                                {xAxis: 7}
-                            ]
-                        },
-                        areaStyle: {normal: {}},
+                        // markLine: {
+                        //     symbol: ['none', 'none'],
+                        //     label: {show: false},
+                            // data: [
+                            //     {xAxis: 2},
+                            //     {xAxis: 3},
+                            //     {xAxis: 5},
+                            //     {xAxis: 7}
+                            // ]
+                        // },
+                        // areaStyle: {normal: {}},
                         data:yDataValue,
                         itemStyle: {
                             normal: {
@@ -651,6 +637,13 @@ export default {
         }
     }
     .top {
+        img {
+            margin-bottom: 5px;
+        }
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: space-between;
         font-size:12px;
         font-weight:normal;
         color:rgba(0,0,0,.56);
@@ -735,6 +728,8 @@ export default {
 .btn-1 {
     width:98px;
     height:48px;
+    background-image: url('../../assets/img/boen/bg-white.png');
+    background-size: contain;
 }
 .btn-2 {
     width:84px;

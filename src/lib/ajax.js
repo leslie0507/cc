@@ -50,10 +50,6 @@ let http = axios.create({
 // 添加请求拦截器,transformRequest之后执行
 http.interceptors.request.use(
   config => {
-    if(config.url.indexOf('getAuditNumber')==-1){
-      app.$Progress.start();
-    }
-    
     return config;
   },
   error => {
@@ -80,7 +76,6 @@ http.interceptors.response.use(
       } catch (error) {
         console.log(error);
       } finally {
-        app.$Progress.finish();
       }
   },
   error => {
