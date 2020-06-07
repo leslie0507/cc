@@ -44,7 +44,7 @@ export default {
     height: 90%;
     width: 14px;
     position: absolute;
-    right: 3%;
+    right: 2%;
     top: 4%;
     border-radius: 5px;
     background-color: #fff;
