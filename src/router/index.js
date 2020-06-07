@@ -88,7 +88,22 @@ export default new Router({
 			path: '/clinicalCase-unknown',
 			component: resolve=>(require(["../components/page/clinicalCase-unknown.vue"],resolve)),
 			meta: { title: '临床病历-未知' }			
-		},
+        },
+        {
+            path: '/kidNav',
+			component: resolve=>(require(["../components/page/kidNav.vue"],resolve)),
+			meta: { title: '儿童版导航' }	
+        },
+        {
+            path: '/operationManual',
+			component: resolve=>(require(["../components/page/operationManual.vue"],resolve)),
+			meta: { title: '操作手册' }	
+        },
+        {
+            path: '/debugPage',
+			component: resolve=>(require(["../components/page/debugPage.vue"],resolve)),
+			meta: { title: '调试窗口' }	
+        },
         {
             path: '*',
             redirect: '/404'

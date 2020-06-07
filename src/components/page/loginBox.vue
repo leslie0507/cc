@@ -2,7 +2,7 @@
 	<div class="login-wrap">
 		<div class="loading-img">
 			<div class="title">
-				临床病历
+				登录
 				<button class="el-btn btn-1 btn-back">
 					<span class="triangle-left"></span>
 					返回
