@@ -10,7 +10,7 @@
             <div class="input-wrapper">
                 <div class="userinfo">
                     <div class="img-wrapper">
-                        <img src="" alt="">
+                        <img src="../../assets/icons/user.png" alt="">
                     </div>
                     <!-- 头像 -->
                     <div class="info-wrapper">
@@ -45,7 +45,7 @@
                                 <div class="btn-right">女</div>
                             </div>
                         </div>
-                        <div class="el-btn-info-lightBlue begin-btn">搜索</div>
+                        <div class="el-btn begin-btn">搜索</div>
                     </div>
                 </div>
 
@@ -63,18 +63,16 @@
                                         <td>年龄</td>
                                         <td>性别</td>
                                         <td>类别</td>
-                                        <td>编辑</td>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(item,index) in tableData" :key="index">
-                                        <td>{{index}}</td>
-                                        <td>{{item.name}}</td>
-                                        <td>{{item.code}}</td>
-                                        <td>{{item.age}}</td>
-                                        <td>{{item.sex}}</td>
+                                    <tr @click="showDetail(item,index)" v-for="(item,index) in tableData" :key="index" :class="{'isClick':clickIndex==index}">
+                                        <td>{{item.Id}}</td>
+                                        <td>{{item.strName}}</td>
+                                        <td>{{item.strID}}</td>
+                                        <td>{{item.nAge}}</td>
+                                        <td>{{item.IsMan?'男':'女'}}</td>
                                         <td>{{item.type}}</td>
-                                        <td>2</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -83,8 +81,11 @@
                     </div>
                     <div class="right">
                         <h1><span></span>病情摘要</h1>
-                        <textarea class="el-textarea textarea-1" name="" id="" rows="14" cols="30"></textarea>
+                        <textarea class="el-textarea textarea-1" name="" id="" rows="14" cols="30" v-model="showData.Diagnosis"></textarea>
+                        <button class="el-btn green-btn" @click="checkMonitor">查阅监护数据</button>
                     </div>
+
+                    
                 </div>
             </div>
             
@@ -93,133 +94,49 @@
 </template>
 
 <script>
-import { Login } from '@/api/user';
-import { queryPostList } from '@/api/data';
-let passwordRule = (rule, value, callback)=>{
-    if(value.length>=6) {
-        callback();
-    }else {
-        callback(new Error('密码长度不能少于6位'));
-    }
-}
+import { ScanPatient } from '@/api/monitor';
 export default {
     data: function() {
         return {
-            tableData:[{
-                name:'约翰尼德普',
-                code:'201408041110368',
-                age:'50',
-                sex:'男',
-                type:'E',
-            }],
-            elName:'',
-            curStartTime: '2019-07-31 08:00:00',
-            day: '0',
-            hour: '00',
-            min: '00',
-            second: '00',
-
-            param: {
-                username: '',
-                password: '',
-            },
-            rules: {
-                username: [
-                    { required: true, message: '用户名不能为空', trigger: 'blur' }
-                ],
-                password: [
-                    { required: true, message: '密码不能为空', trigger: 'blur' },
-                    { validator: passwordRule, trigger: 'blur' }
-                ],
-            },
+            showData:{},
+            clickIndex:-1,
+            tableData:[],
         };
     },
     created(){
-        sessionStorage.removeItem('ms_user');
-        this.param.username = sessionStorage.getItem('userName');
-        
-        
-    },
-    mounted(){
-        this.curStartTime = '2020-08-09'
-        this.countTime()
+        console.log(ScanPatient)
+        this.getData();
     },
     methods: {
-        // 倒计时
-        countTime () {
-            // 获取当前时间
-            let date = new Date()
-            let now = date.getTime()
-            // 设置截止时间
-            let endDate = new Date(this.curStartTime) // this.curStartTime需要倒计时的日期
-            let end = endDate.getTime()
-            // 时间差
-            let leftTime = end - now
-            // 定义变量 d,h,m,s保存倒计时的时间
-            if (leftTime >= 0) {
-                // 天
-                this.day = Math.floor(leftTime / 1000 / 60 / 60 / 24)
-                // 时
-                let h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
-                this.hour = h < 10 ? '0' + h : h
-                // 分
-                let m = Math.floor(leftTime / 1000 / 60 % 60)
-                this.min = m < 10 ? '0' + m : m
-                // 秒
-                let s = Math.floor(leftTime / 1000 % 60)
-                this.second = s < 10 ? '0' + s : s
-            } else {
-                this.day = 0
-                this.hour = '00'
-                this.min = '00'
-                this.second = '00'
-            }
-            // 等于0的时候不调用
-            console.log( this.day ,
-                this.hour ,
-                this.min,
-                this.second ,leftTime)
-            if (Number(this.hour) === 0 && Number(this.day) === 0 && Number(this.min) === 0 && Number(this.second) === 0) {
-                return
-            } else {
-            // 递归每秒调用countTime方法，显示动态时间效果,
-                setTimeout(this.countTime, 1000)
-            }
-        },　
-        submitForm() {
-           
-            this.$refs.login.validate(valid => {
-                if (valid) {
-                    Login({
-                        account:this.param.username,
-                        pwd:this.param.password
-                    }).then(res => {
-                        console.log(this.respSuccess(res))
-                        if(!this.respSuccess(res)){
-                            this.resNotice.warning(res.msg,this.respMessage(res))
-                            return
-                        }
-                        sessionStorage.setItem('ms_user', JSON.stringify(res.data));
-                        queryPostList().then(res=>{
-                            sessionStorage.setItem('expressList', JSON.stringify(res.data));
-                            sessionStorage.setItem('userName', this.param.username);
-                            this.$router.push('/');
-                        })
-                        
-                    }).catch(err=>{
-                        console.log(err)
-                    })
-                } else {
-                    console.log('error submit!!');
-                    return false;
-                }
+        checkMonitor(){
+            this.$router.push({
+                path: "/monitor"
             });
         },
+        showDetail(item,index){
+            this.clickIndex= index;
+            this.showData= item;
+        },
+        getData(){
+            ScanPatient().then(res=> {
+                this.tableData = res.data.slice(0,5);
+            })
+        },　
     },
 };
 </script>
 
 <style lang="scss" scoped>
+.green-btn {
+    margin-top: 17px;
+    width: 100%;
+    height:56px;
+    color: rgba(255, 255, 255, 1);
+    background: url(../../assets/img/boen/submit-btn-1.png) no-repeat;
+    background-size: contain;
+    line-height: 56px;
+    font-weight: bold;
+}
 /deep/ .monitor {
     input {
         width: 60px;
@@ -240,6 +157,8 @@ export default {
     text-align: center;
     float: right;
     margin-top:10px;
+    background: url(../../assets/img/boen/btn-2.png) no-repeat;
+    background-size: contain;
 }
 .btn-1 {
     width:98px;
@@ -350,13 +269,32 @@ export default {
                     font-weight:bold;
                     color:rgba(119,127,143,1);
                     line-height:30px;
+                    margin-right: 15px;
                 }
                 .age-opt {
                     span {
+                        &:nth-child(1){
+                            color: #fff;
+                            background: url(../../assets/img/boen/add-btn-3.png) no-repeat;
+                            background-size: contain;
+                        }
+                        &:nth-child(2){
+                            background: url(../../assets/img/boen/add-btn-2.png) no-repeat; 
+                            background-size: contain;
+                        }
+                        &:nth-child(3){
+                            color: rgba(23, 125, 146, 1);
+                            background: url(../../assets/img/boen/add-btn-1.png) no-repeat; 
+                            background-size: contain;
+                        }
+                        cursor: pointer;
                         width:40px;
                         height:30px;
+                        line-height: 30px;
+                        text-align: center;
                         display: inline-block;
                     }
+                    margin-right: 10px;
                     display: flex;
                     align-items: center;
                     flex-direction: column;
@@ -424,7 +362,11 @@ export default {
                         width: 100%;
                         tbody {
                             background: #fff;
+                            .isClick {
+                                background: rgba(245, 245, 245, 1);
+                            }
                             tr {
+                                cursor: pointer;
                                 height:70px;
                             }
                             td {
@@ -477,7 +419,7 @@ export default {
                 }
                 .textarea-1 {
                     width:280px;
-                    height: calc(100% - 35px);
+                    height: calc(100% - 108px);
                 }
                 h1 {
                     font-size:18px;
@@ -509,6 +451,12 @@ export default {
                     margin: 0 29px;
                 }
                 .img-wrapper{
+                    img {
+                        width: 110px;
+                    }
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                     position: absolute;
                     left: 0;
                     bottom: 0;

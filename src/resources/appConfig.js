@@ -1,9 +1,8 @@
 export default {
   //生产环境后台地址
-  prodProxyUrl: "http://47.107.150.65:3100/api",
-  downLoadUrl: "http://47.107.150.65:3100/",
+  prodProxyUrl: "http://127.0.0.1:5000/",
   //开发环境下二级域名
-  devProxyUrl: "/api",
+  devProxyUrl: "http://127.0.0.1:5000/",
   //默认布局
   defaultLayout: 948,
   //是否折叠

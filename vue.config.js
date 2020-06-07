@@ -124,11 +124,8 @@ module.exports = {
     // hotOnly: false,
     proxy: {
       "/api": {
-        target: "http://47.107.150.65:3100/api",  //47.107.150.65  183.66.178.70
+        target: "http://127.0.0.1:5000",  //47.107.150.65  183.66.178.70
         changeOrigin: true, //是否跨域
-        pathRewrite: {
-          "^/api": "/"
-        } //重写接口
       }
     }
   },
