@@ -39,11 +39,11 @@ export default new Router({
             component: resolve=>(require(["../components/page/monitor.vue"],resolve)),
             meta: { title: '实时监护' }
         },
-        {
-            path: '/login',
-            component: resolve=>(require(["../components/page/login.vue"],resolve)),
-            meta: { title: '密码登录框' }
-        },
+        // {
+        //     path: '/login',
+        //     component: resolve=>(require(["../components/page/login.vue"],resolve)),
+        //     meta: { title: '密码登录框' }
+        // },
 		{
 			path: '/loginBox',
 			component: resolve=>(require(["../components/page/loginBox.vue"],resolve)),

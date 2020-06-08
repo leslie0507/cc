@@ -52,7 +52,7 @@
         <!-- foot -->
         <div class="footer">
             <div class="title">
-                <span>© 2019 All Rights Reserved. 重庆12345有限公司</span>
+                <span>© 2019 All Rights Reserved. 重庆博恩富克医疗设备有限有限公司</span>
             </div>
             <div class="foot-img">
                 <img src="../../assets/icons/footLogo.png" alt />

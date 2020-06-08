@@ -92,7 +92,7 @@
                                         <img src="../../assets/img/boen/b-r.png" alt="">
                                     </div>
                                 </div>
-                                <div class="value">30</div>
+                                <div class="value">{{showItem&&showItem.PerturbValue}}</div>
                             </div>
                             <div class="left-item">
                                 <div class="text-werapper">
@@ -104,9 +104,17 @@
                                         <img src="../../assets/img/boen/b-r.png" alt="">
                                     </div>
                                 </div>
-                                <div class="value">66</div>
+                                <div class="value">{{showItem&&showItem.EdemaValue}}</div>
                             </div>
-                            <div class="left-item">
+                            <div class="left-item left-item-disabled" v-if="!isClose" style="position:relative;">
+                                <div class="label">颅内压<span>Brain Edema</span></div>
+                                <div class="switch closed" @click="switchItem">
+                                    <div class="switch-wrapper">
+                                        <div class="switch-radio"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="left-item" v-if="isClose" style="position:relative;">
                                 <div class="text-werapper">
                                     <div>颅内压</div>
                                     <div style="width:100%;text-align:left;">Brain Edema</div>
@@ -116,29 +124,52 @@
                                         <img src="../../assets/img/boen/b-r.png" alt="">
                                     </div>
                                 </div>
-                                <div class="value">25</div>
+                                <div class="value">{{showItem&&showItem.ICPValue}}</div>
+                                <div class="switch " @click="switchItem">
+                                    <div class="switch-wrapper">
+                                        <div class="switch-radio"></div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="text-info">*排除开颅、肿瘤</div>
                         </div>
                     </div>
                     <div class="right">
+                       
                         <div class="right-t">
-
+                            <div class="select">
+                                <div>单一数据/ 全部数据</div>
+                            </div>
+                            <div class="x-y">
+                                <span>X</span>
+                                <span>Y</span>
+                            </div>
+                            <div class="left-top">
+                                <span>左</span>
+                                <span>上</span>
+                            </div>
+                            <div class="right-bottom">
+                                <span>右</span>
+                                <span>下</span>
+                            </div>
+                            <div class="fd">放大</div>
+                            <div class="sx">缩小</div>
+                            <div class="fw">复位</div>
                         </div>
                         
                         <!--- 图表 ---->
                         <div class="right-chart">
                             <div id="chart1"></div>
                             <div id="chart2"></div>
-                            <div id="chart3"></div>
-                            <div class="time-text">
-                                <div v-for="i in 7" class="text-1">
-                                    <span>10:52</span>
-                                    <span>06-03</span>
-                                </div>
-                                <div class="time-label">时间</div>
-                            </div>
+                            <div id="chart3" :style="{'visibility':!isClose?'hidden':''}"></div>
+                            <!-- BNPerturbValue   扰动系数
+                            BNEdemaValue   水肿系数
+                            BNICPValue   颅内压 -->
+                            <!-- <div class="time-text">
+                                
+                            </div> -->
+                            <div class="time-label">时间</div>
                         </div>
                     </div>
                 </div>
@@ -155,6 +186,7 @@ import { queryPostList } from '@/api/data';
 export default {
     data: function() {
         return {
+            isClose:true,
             websock: null,//建立的连接
             lockReconnect: false,//是否真正建立连接
             timeout: 5*1000,//30秒一次心跳
@@ -171,15 +203,9 @@ export default {
             min: '00',
             second: '00',
 
-            param: {
-                username: '',
-                password: '',
-            }
         };
     },
     created(){
-        sessionStorage.removeItem('ms_user');
-        this.param.username = sessionStorage.getItem('userName');
         this.initWebSocket();
     },
     destroyed: function() {
@@ -189,9 +215,19 @@ export default {
     mounted(){
         this.curStartTime = '2020-08-09'
         this.countTime();
-        
+        this.drawChart()
+    },
+    computed:{
+        showItem(){
+            let lastItem = this.chartData.slice(-1) || []
+            console.log(lastItem)
+            return lastItem[0];
+        }
     },
     methods: {
+        switchItem(){
+           this.isClose= !this.isClose; 
+        },
         goHomePage(){
             this.$router.push({
                 path: "/kidNav",
@@ -284,7 +320,7 @@ export default {
             
             if(!resData.hasOwnProperty('status')) {
                 let item = JSON.parse(resData[0]);
-                item.dateTime = moment(item.datetime).format("YYYY-MM-DD HH:mm:ss");
+                item.dateTime = moment(item.datetime).format("mm:ss MM-DD ");
                 item.secondTime = moment(item.datetime).format("mm:ss");
                 this.chartTime.push(item.dateTime);
                 this.chartData.push(item);
@@ -299,9 +335,9 @@ export default {
             this.websock.send(msg);
         },
         drawChart(){
-            this.drawChatOne('rgba(197, 35, 231, 1)','rgba(197, 35, 231, 0)','chart1','EdemaValue');
-            this.drawChatOne('rgba(60, 167, 230, 1)','rgba(60, 167, 230, 0)','chart2','ICPValue');
-            this.drawChatOne('rgba(247, 187, 87, 1)','rgba(247, 187, 87, 0)','chart3','PerturbValue');
+            this.drawChatOne('rgba(197, 35, 231, 1)','rgba(197, 35, 231, 0)','chart1','PerturbValue');
+            this.drawChatOne('rgba(60, 167, 230, 1)','rgba(60, 167, 230, 0)','chart2','EdemaValue');
+            this.drawChatOne('rgba(247, 187, 87, 1)','rgba(247, 187, 87, 0)','chart3','ICPValue');
         },
         drawChatOne(color,color1,id,type){
             let xData = this.chartTime.slice(-7);
@@ -327,7 +363,6 @@ export default {
                     normal:{
                     //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
                         color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
-
                             offset: 0,
                             color: 'rgba(80,141,255,0.39)'
                         }, {
@@ -337,13 +372,12 @@ export default {
                             offset: 1,
                             color: 'rgba(38,197,254,0.00)'
                         }])
-
                     }
                 },
                 grid: {
-                    left: '3%',
+                    left: type=='ICPValue'?'4%':'3%',
                     right: '2%',
-                    bottom: '2%',
+                    bottom: '1%',
                     top:'10',
                     containLabel: true
                 },
@@ -354,16 +388,22 @@ export default {
                     type: 'category',
                     inverse:true,   //此属性控制方向,默认为false,改为true就达到你要的要求了
                     boundaryGap:false,
-                    label: {
-                        show: false
-                    },
+                    // label: {
+                    //     show: false
+                    // },
                     axisTick: {
                         show: false
                     },
                     axisLabel: {//y轴文字的配置
-                        show: false
+                        show: type=='ICPValue',
+                        textStyle: {
+                            color: '#566278'
+                        },
+                        formatter:function(value){  
+                            return value.split(" ").join("\n");  
+                        }  
                     },
-                    axisLine: {//y轴线的颜色以及宽度
+                    axisLine: {
                         show: true,
                         lineStyle: {
                             color: color,
@@ -398,31 +438,31 @@ export default {
                     },
                     // EdemaValue ICPValue PerturbValue
                     min:0,
-                    max:type=='EdemaValue'?250:type=='ICPValue'?200:50,
-                    minInterval:type=='EdemaValue'?50:type=='ICPValue'?40:10
+                    max:type=='PerturbValue'?250:type=='EdemaValue'?200:50,
+                    minInterval:type=='PerturbValue'?50:type=='EdemaValue'?40:10
                 },
                 series: [
                     {
                         name:'浏览次数',
                         type:'line',
                         stack: '总量1',
-                        // symbol: 'circle',
-                        // symbolSize: 5,
+                        symbol: 'circle',
+                        symbolSize: 5,
                         sampling: 'average',
                         itemStyle: {
                             color: 'rgba(197, 35, 231, .7)'
                         },
-                        // markLine: {
-                        //     symbol: ['none', 'none'],
-                        //     label: {show: false},
-                            // data: [
-                            //     {xAxis: 2},
-                            //     {xAxis: 3},
-                            //     {xAxis: 5},
-                            //     {xAxis: 7}
-                            // ]
-                        // },
-                        // areaStyle: {normal: {}},
+                        markLine: {
+                            symbol: ['none', 'none'],
+                            label: {show: false},
+                            data: [
+                                {xAxis: 2},
+                                {xAxis: 3},
+                                {xAxis: 5},
+                                {xAxis: 7}
+                            ]
+                        },
+                        areaStyle: {normal: {}},
                         data:yDataValue,
                         itemStyle: {
                             normal: {
@@ -498,27 +538,16 @@ export default {
 .container {
     .right {
         .right-chart {
-            .time-text {
-                .time-label{
-                    flex:0 0 20px;
-                    text-align: right;
-                    font-size: 14px;
-                    color: rgba(1, 146, 114, 1);
-                }
-                .text-1 {
-                    flex:0 0 40px;
-                    color: rgba(86, 98, 120, 1);
-                    display: flex;
-                    justify-content: space-between;
-                    flex-direction: column;
-                    align-items: center;
-                }
-                flex:0 0 22px;
-                font-size: 14px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+            .time-label {
+                width: auto;
+                font-size:14px;
+                font-weight:400;
+                color:rgba(1,146,114,1);
+                position: absolute;
+                right: 4px;
+                bottom: 4px;
             }
+            position: relative;
             height: calc(100% - 53px);
             width: 100%;
             display: flex;
@@ -526,14 +555,118 @@ export default {
             align-items: center;
             flex-direction: column;
             div {
-                flex: 1;
+                &:nth-child(1) {
+                    flex: 3;
+                }
+                &:nth-child(2) {
+                    flex: 3;
+                }
+                &:nth-child(3) {
+                    flex: 4;
+                }
                 width: 100%;
             }
         }
         .right-t {
+            font-size:17px;
+            font-weight:bold;
+            color: #777F8F;
+            padding-left: 58px;
+            padding-right: 15px;
+            box-sizing: border-box;
+            .select {
+                color: #777F8F;
+                line-height: 53px;
+                text-align: center;
+                width:180px;
+                height:53px;
+                background-image: url('../../assets/img/boen/jx.png');
+                background-size: contain;
+            }
+            .x-y {
+                span {
+                    flex: 1;
+                    text-align: center;
+                    &:nth-child(1){
+                        color:#fff;
+                    }
+                }
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width:77px;
+                height:53px;
+                background-image: url('../../assets/img/boen/XY.png');
+                background-size: cover;
+            }
+            .left-top {
+                span {
+                    &:nth-child(2){
+                        color:#C0C4CC;
+                    }
+                }
+                width:55px;
+                height:53px;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                align-items: center;
+                background-image: url('../../assets/img/boen/Left.png');
+                background-size: cover;
+            }
+            .right-bottom {
+                span {
+                    &:nth-child(2){
+                        color:#C0C4CC;
+                    }
+                }
+                width:55px;
+                height:53px;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                align-items: center;
+                background-image: url('../../assets/img/boen/Left.png');
+                background-size: cover;
+            }
+            .fd {
+                line-height: 53px;
+                text-align: center;
+                width:55px;
+                height:53px;
+                font-size:17px;
+                font-weight:bold;
+                color:rgba(119,127,143,1);
+                background-image: url('../../assets/img/boen/Left.png');
+                background-size: cover;
+            }
+            .sx {
+                width:55px;
+                height:53px;
+                line-height: 53px;
+                text-align: center;
+                font-size:17px;
+                font-weight:bold;
+                color:rgba(119,127,143,1);
+                background-image: url('../../assets/img/boen/Left.png');
+                background-size: cover;
+            }
+            .fw {
+                width:63px;
+                height:53px;
+                line-height: 53px;
+                font-size:17px;
+                font-weight:bold;
+                text-align: center;
+                color:rgba(119,127,143,1);
+                background-image: url('../../assets/img/boen/Reset.png');
+                background-size: cover;
+            }
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             height: 53px;
             width: 100%;
-            padding-left: 44px;
         }
         flex: 1;
     }
@@ -544,7 +677,51 @@ export default {
                 font-weight:400;
                 color:rgba(1,146,114,1);
             }
+            .left-item-disabled {
+                padding: 0 20px 0 10px !important;
+                background-image: none !important;
+                font-weight: bold;
+                span {
+                    font-weight: normal;
+                    margin-left: 4px;
+                }
+                .label {
+                    color: rgba(218, 118, 0, 1);
+                }
+                align-items: flex-start !important;
+            }
             .left-item {
+                .closed {
+                    .switch-radio {
+                        left: 1px !important;         
+                    }     
+                    background:#ccc !important;   
+                }
+                .switch {
+                    .switch-wrapper {
+                        .switch-radio {
+                            top: 1px;
+                            right: 1px;
+                            position: absolute;
+                            width:13px;
+                            height:13px;
+                            background:rgba(255,255,255,1);
+                            border-radius:50%;
+                        }
+                        position: relative;
+                        width: 100%;
+                        height: 100%;
+                    }
+                    cursor: pointer;
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                    width:30px;
+                    height:16px;
+                    background:rgba(0,215,0,1);
+                    box-shadow:1px 0px 2px 0px rgba(0, 0, 0, 0.28);
+                    border-radius:8px;
+                }
                 &:not(:last-child) {
                     margin-bottom: 10px;
                 }
@@ -711,6 +888,7 @@ export default {
     flex-direction: column;
 }
 .begin-btn {
+    cursor: pointer;
     width:158px;
     height: 95px;
     margin-left: 21px;

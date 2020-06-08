@@ -4,7 +4,7 @@
         <div class="op-title">
             <div class="op-title-left">
                 <img src="../../assets/icons/kidNavLogo.png" alt="logo" />
-                <p>© 2020 All Rights Reserved. 重庆12345有限公司</p>
+                <p>© 2020 All Rights Reserved. 重庆博恩富克医疗设备有限有限公司</p>
             </div>
             <div class="op-title-right">
                 <h3>操 作 手 册</h3>
