@@ -4,7 +4,7 @@
             <div class="title">
                 <div></div>
                 实时监护
-                <button class="el-btn btn-1">
+                <button class="el-btn btn-1" @click="goHomePage">
                     <span class="triangle-left"></span>
                     返回
                 </button>
@@ -58,7 +58,7 @@
                     </div>
 
                     <div class="btn-wrapper">
-                        <div class="el-btn el-btn-info-mlv modify">修改病历</div>
+                        <div class="el-btn el-btn-info-mlv modify" @click="goModifyCase">修改病历</div>
                         <div class="el-btn el-btn-info-mlv print">打 印</div>
                     </div>
 
@@ -192,6 +192,16 @@ export default {
         
     },
     methods: {
+        goHomePage(){
+            this.$router.push({
+                path: "/kidNav",
+            });
+        },
+        goModifyCase(){
+            this.$router.push({
+                path: "/modifyCase",
+            });
+        },
         initWebSocket(){//建立连接
             //初始化weosocket
             //const wsuri = "ws://sms.填写您的地址.com/websocket/" + this.charId; //ws地址

@@ -11,7 +11,7 @@
                 <div class="btn-top">
                     <img src="../../assets/icons/btn-top1.png" alt="bg1" />
                 </div>
-                <button class="btn-bottom">
+                <button class="btn-bottom" @click="goMonitor">
                     <span class="btn-icon-left icon1"></span>
                     <span class="btn-text-left">监 护</span>
                 </button>
@@ -20,7 +20,7 @@
                 <div class="btn-top">
                     <img src="../../assets/icons/btn-top2.png" alt="bg1" />
                 </div>
-                <button class="btn-bottom">
+                <button class="btn-bottom" @click="goMonitorCase">
                     <span class="btn-icon-left icon2"></span>
                     <span class="btn-text-left">查 询</span>
                 </button>
@@ -29,7 +29,7 @@
                 <div class="btn-top">
                     <img src="../../assets/icons/btn-top3.png" alt="bg1" />
                 </div>
-                <button class="btn-bottom">
+                <button class="btn-bottom" @click="goMonitorCase">
                     <span class="btn-icon-left icon3"></span>
                     <span class="btn-text-left">档 案</span>
                 </button>
@@ -39,7 +39,7 @@
                     <span class="btn-icon-right icon4"></span>
                     <span class="btn-text-right text1">设 置</span>
                 </button>
-                <button class="btn-right right2">
+                <button class="btn-right right2" @click="goOp">
                     <span class="btn-icon-right icon5"></span>
                     <span class="btn-text-right text2">帮 助</span>
                 </button>
@@ -52,7 +52,7 @@
         <!-- foot -->
         <div class="footer">
             <div class="title">
-                <span>© 2019 All Rights Reserved. 重庆博恩富克医疗设备有限公司</span>
+                <span>© 2019 All Rights Reserved. 重庆12345有限公司</span>
             </div>
             <div class="foot-img">
                 <img src="../../assets/icons/footLogo.png" alt />
@@ -73,9 +73,21 @@ export default {
         goSetting(){
             this.$router.push({
                 path: "/setting",
-                // query: {
-                // id: id
-                // }
+            });
+        },
+        goOp(){
+            this.$router.push({
+                path: "/operationmanual",
+            });
+        },
+        goMonitor(){
+            this.$router.push({
+                path: "/monitor",
+            });
+        },
+        goMonitorCase(){
+            this.$router.push({
+                path: "/monitorCase",
             });
         }
     },
@@ -156,20 +168,22 @@ button {
                 align-items: center;
                 justify-content: center;
                 .btn-icon-left {
-                    width: 20px;
-                    height: 20px;
-                    margin-right: 6px;
-                    margin-left: -6px;
+                    width: 16px;
+                    height: 16px;
+                    margin: 2px 6px 0px -6px;
                     z-index: 9;
                 }
                 .icon1 {
                     background: url('../../assets/icons/icon1.png') no-repeat center center;
+                    background-size: contain;
                 }
                 .icon2 {
                     background: url('../../assets/icons/icon2.png') no-repeat center center;
+                    background-size: contain;
                 }
                 .icon3 {
                     background: url('../../assets/icons/icon3.png') no-repeat center center;
+                    background-size: contain;
                 }
                 .btn-text-left {
                     font-size: 18px;

@@ -116,7 +116,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-
+    background: url(../../assets/icons/background.png) no-repeat center center;
+    background-size: cover;
     .loading-img {
         width: 504px;
         height: 286px;
@@ -133,7 +134,7 @@ export default {
             color: rgba(119, 127, 143, 1);
             align-items: center;
             background: linear-gradient(0deg, rgba(230, 230, 230, 1), rgba(255, 255, 255, 1));
-            box-shadow: 0px 2px 4px 0px rgba(12, 3, 6, 0.1), 0px -8px 18px 0px rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 2px 4px 0px rgba(12, 3, 6, 0.1);
             border-radius: 8px 8px 0 0;
             font-size: 24px;
             font-weight: bold;

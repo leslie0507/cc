@@ -3,7 +3,7 @@
         <div class="loading-img">
             <div class="title">
                 <div class="title-text">设置</div>
-                <button class="el-btn btn-1 btn-back">
+                <button class="el-btn btn-1 btn-back" @click="gohomepage">
                     <span class="triangle-left"></span>
                     返回
                 </button>
@@ -11,11 +11,11 @@
             <!-- 设置信息区域-->
             <div class="setting-wrapper">
                 <ul>
-                    <li>显示设置</li>
-                    <li>用户设置</li>
-                    <li>后台硬件维护</li>
-                    <li>语言设置</li>
-                    <li>恢复出厂设置</li>
+                    <li @click="goSettingTime">显示设置</li>
+                    <li @click="goSettingUser">用户设置</li>
+                    <li @click="">后台硬件维护</li>
+                    <li @click="">语言设置</li>
+                    <li @click="">恢复出厂设置</li>
                 </ul>
             </div>
         </div>
@@ -81,6 +81,21 @@ export default {
                     return false;
                 }
             });
+        },
+        goSettingTime(){
+            this.$router.push({
+                path: "/settingtime",
+            });
+        },
+        goSettingUser(){
+            this.$router.push({
+                path: "/settingUser",
+            });
+        },
+        gohomepage(){
+            this.$router.push({
+                path: "/kidNav",
+            });
         }
     }
 };
@@ -102,12 +117,13 @@ export default {
     margin-bottom: 39px;
 }
 .login-wrap {
-    
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    background: url(../../assets/icons/background.png) no-repeat center center;
+    background-size: cover;
     .loading-img {
         width: 504px;
         height: 500px;
@@ -130,7 +146,7 @@ export default {
 
             align-items: center;
             background: linear-gradient(0deg, rgba(230, 230, 230, 1), rgba(255, 255, 255, 1));
-            box-shadow: 0px 2px 4px 0px rgba(12, 3, 6, 0.1), 0px -8px 18px 0px rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 2px 4px 0px rgba(12, 3, 6, 0.1);
             border-radius: 8px 8px 0 0;
             font-size: 24px;
             font-weight: bold;
@@ -157,8 +173,8 @@ export default {
             ul {
                 list-style: none;
                 margin: 0 20px;
-               
                 li {
+                    cursor: pointer; 
                     width: 100%;
                     height:85px;
                     font-size: 24px;

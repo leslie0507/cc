@@ -2,11 +2,11 @@
     <div class="login-wrap">
         <div class="loading-img">
             <div class="title">
-                <button class="el-btn btn-2">
-                    删除病例
+                <button class="el-btn btn-2 btn-del">
+                    × 删除病例
                 </button>
                 编辑病例
-                <button class="el-btn btn-1">
+                <button class="el-btn btn-1 btn-back">
                     <span class="triangle-left"></span>
                     返回
                 </button>
@@ -150,6 +150,8 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
+    background: url(../../assets/icons/background.png) no-repeat center center;
+    background-size: cover;
     .loading-img {
         width:504px;
         height:586px;
@@ -216,16 +218,36 @@ h1 {
             padding: 0 20px;
             box-sizing: border-box;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             background:linear-gradient(0deg,rgba(230,230,230,1),rgba(255,255,255,1));
-            box-shadow:0px 2px 4px 0px rgba(12,3,6,0.1), 0px -8px 18px 0px rgba(255,255,255,0.9);
+            box-shadow:0px 2px 4px 0px rgba(12,3,6,0.1);
             border-radius:8px 8px 0 0;
             font-size:24px;
             font-weight:bold;
             color:rgba(153,153,153,1);
             line-height:30px;
             text-shadow:0px 2px 0px rgba(255,255,255,1);
+            position: relative;
+            .btn-del {
+                position: absolute;
+                width:84px;
+                height:30px;
+                top:16px;
+                left: 20px;
+                background: url(../../assets/icons/btn-del.png) no-repeat center center;
+                background-size: cover;
+            }
+            .btn-back {
+                width: 98px;
+                height: 48px;
+                position: absolute;
+                top: 6px;
+                right: 20px;
+                color: rgba(119, 127, 143, 1);
+                background: url(../../assets/icons/back-btn.png) no-repeat center center;
+                background-size: cover;
+            }
         }
     }
 }

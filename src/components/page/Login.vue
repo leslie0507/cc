@@ -1,10 +1,9 @@
 <template>
     <div class="login-wrap">
-        <div class="bg-img"></div>
         <div class="loading-img">
             <div class="title">登录</div>
             <div class="input-wrapper">
-                <input class="el-input password" type="text">
+                <input class="el-input password" type="text"  placeholder="密码">
                 <div class="bth-wrapper">
                     <button class="el-btn el-btn-info-bs btn-1">
                         <span class="triangle-left"></span>
@@ -105,17 +104,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    .bg-img {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: -8;
-        width: 100%;
-        height: 100%;
-        background: url('../../assets/icons/background.png') no-repeat center center;
-        background-size: cover;
-        filter: blur(10px);
-    }
+    background: url(../../assets/icons/background.png) no-repeat center center;
+    background-size: cover;
     .loading-img {
         width:400px;
         height:274px;

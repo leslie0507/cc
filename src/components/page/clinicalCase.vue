@@ -1,6 +1,5 @@
 <template>
     <div class="login-wrap">
-        <div class="bg-img"></div>
         <div class="loading-img">
             <div class="title">
                 临床病历
@@ -155,19 +154,8 @@ textarea {
     display: flex;
     justify-content: center;
     align-items: center;
-    // background: url(../../assets/icons/background.png) no-repeat center;
-    // background-size: cover;
-    .bg-img {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: -8;
-        width: 100%;
-        height: 100%;
-        background: url(/img/background.ebf2e6ff.png) no-repeat center center;
-        background-size: cover;
-        filter: blur(0.625rem);
-    }
+    background: url(../../assets/icons/background.png) no-repeat center;
+    background-size: cover;
     .loading-img {
         width: 561px;
         height: 485px;
@@ -185,7 +173,7 @@ textarea {
             color: rgba(119, 127, 143, 1);
             align-items: center;
             background: linear-gradient(0deg, rgba(230, 230, 230, 1), rgba(255, 255, 255, 1));
-            //box-shadow: 0px 2px 4px 0px rgba(12, 3, 6, 0.1), 0px -8px 18px 0px rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 2px 4px 0px rgba(12, 3, 6, 0.1);
             border-radius: 8px 8px 0 0;
             font-size: 24px;
             font-weight: bold;

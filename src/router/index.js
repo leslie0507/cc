@@ -7,7 +7,7 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/setting'
+            redirect: '/kidNav'
         },
         {
             path: '/editCase',
@@ -20,17 +20,22 @@ export default new Router({
             meta: { title: '编辑病例' }
         },
         {
-            path: '/testResult',
-            component: resolve=>(require(["../components/page/testResult.vue"],resolve)),
-            meta: { title: '检测结果' }
-        },
-        {
             path: '/monitorCase',
             component: resolve=>(require(["../components/page/monitorCase.vue"],resolve)),
             meta: { title: '监护病例' }
         },
         {
+            path: '/modifyCase',
+            component: resolve=>(require(["../components/page/modifyCase.vue"],resolve)),
+            meta: { title: '修改病历' }
+        },
+        {
             path: '/monitor',
+            component: resolve=>(require(["../components/page/monitor.vue"],resolve)),
+            meta: { title: '实时监护' }
+        },
+        {
+            path: '/monitor copy',
             component: resolve=>(require(["../components/page/monitor.vue"],resolve)),
             meta: { title: '实时监护' }
         },
@@ -84,11 +89,6 @@ export default new Router({
             component: resolve=>(require(["../components/page/checkResult.vue"],resolve)),
             meta: { title: '检测结果' }
         },
-        {
-            path: '/loading',
-            component: resolve=>(require(["../components/page/loadingPage.vue"],resolve)),
-            meta: { title: '登录' }
-        },
 		{		
 			path: '/clinicalCase',
 			component: resolve=>(require(["../components/page/clinicalCase.vue"],resolve)),
@@ -113,6 +113,11 @@ export default new Router({
             path: '/debugPage',
 			component: resolve=>(require(["../components/page/debugPage.vue"],resolve)),
 			meta: { title: '调试窗口' }	
+        },
+        {
+            path: '/404',
+			component: resolve=>(require(["../components/page/404.vue"],resolve)),
+			meta: { title: '404' }	
         },
         {
             path: '*',

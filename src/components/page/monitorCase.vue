@@ -5,7 +5,7 @@
             <div class="title">
                 <div></div>
                 查询病例档案
-                <div class="el-btn-info-bs back-btn"><span class="triangle-left"></span>返回</div>
+                <div class="el-btn-info-bs back-btn" @click="goHomePage"><span class="triangle-left"></span>返回</div>
             </div>
             <div class="input-wrapper">
                 <div class="userinfo">
@@ -121,8 +121,13 @@ export default {
             ScanPatient().then(res=> {
                 this.tableData = res.data.slice(0,5);
             })
-        },　
-    },
+        },
+        goHomePage(){
+            this.$router.push({
+                path: "/kidNav",
+            });
+        }　
+    }
 };
 </script>
 
@@ -179,6 +184,7 @@ export default {
     height: 100%;
     .loading-img {
         .back-btn {
+            cursor:pointer;
             width:98px;
             height:48px;
             line-height: 48px;

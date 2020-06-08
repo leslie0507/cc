@@ -4,7 +4,7 @@
         <div class="op-title">
             <div class="op-title-left">
                 <img src="../../assets/icons/kidNavLogo.png" alt="logo" />
-                <p>© 2020 All Rights Reserved. 重庆博恩富克医疗设备有限公司</p>
+                <p>© 2020 All Rights Reserved. 重庆12345有限公司</p>
             </div>
             <div class="op-title-right">
                 <h3>操 作 手 册</h3>
@@ -80,7 +80,7 @@
     align-items: center;
     background-color: #f6f7fb;
     .op-title {
-        width: 100%;
+        width: 891px;
         height: 150px;
         display: flex;
         justify-content: space-between;
@@ -127,7 +127,7 @@
     }
     // ---分割线---content---
     .op-content {
-        width: 87%;
+        width: 891px;
         // height: 618px;
         display: flex;
         flex-direction: column;
@@ -200,7 +200,7 @@
             }
         }
         .op-detail {
-            width: 100%;
+            width: 891px;
             height: 268px;
             background: linear-gradient(180deg, rgba(96, 208, 183, 0.3), rgba(0, 138, 107, 0.3));
             box-shadow: 0px 6px 18px 0px rgba(0, 230, 179, 0.15);
@@ -232,7 +232,13 @@
                             opacity: 0.8;
                         }
                     }
+                    .img1 img {
+                        width: 150px;
+                        height: 166px;
+                    }
                     .img2 img {
+                        width: 78px;
+                        height: 61px;
                         margin-bottom: 15px;
                     }
                 }
