@@ -4,8 +4,11 @@
         <div class="loading-img">
             <div class="title">
                 <div></div>
-                查询病例档案
-                <div class="el-btn-info-bs back-btn" @click="goHomePage"><span class="triangle-left"></span>返回</div>
+                监护病例
+                <div class="right-wrapper">
+                    <button class="el-btn green-btn-top" @click="addCase">+ 新增病例</button>
+                    <div class="el-btn-info-bs back-btn" @click="goHomePage"><span class="triangle-left"></span>返回</div>
+                </div>
             </div>
             <div class="input-wrapper">
                 <div class="userinfo">
@@ -82,7 +85,7 @@
                     <div class="right">
                         <h1><span></span>病情摘要</h1>
                         <textarea class="el-textarea textarea-1" name="" id="" rows="14" cols="30" v-model="showData.Diagnosis"></textarea>
-                        <button class="el-btn green-btn" @click="checkMonitor">查阅监护数据</button>
+                        <button class="el-btn green-btn" @click="checkMonitor">继续监护</button>
                     </div>
 
                     
@@ -126,6 +129,11 @@ export default {
                 this.tableData = res.data.slice(0,5);
             })
         },
+        addCase(){
+            this.$router.push({
+                path: "/addCase",
+            });
+        },
         goHomePage(){
             this.$router.push({
                 path: "/kidNav",
@@ -136,6 +144,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.green-btn-top {
+    width:120px;
+    height:48px;
+    color: rgba(255, 255, 255, 1);
+    background: url(../../assets/img/boen/submit-btn-1.png) no-repeat;
+    background-size: cover;
+    line-height: 48px;
+    font-weight: bold;
+    margin-right: 9px;
+}
 .green-btn {
     margin-top: 17px;
     width: 100%;
@@ -233,17 +251,17 @@ export default {
                     }
                     .sex-btn {
                         .active-3 {
-                            color: #fff;
+                            color: #FFF;
                             background: url('../../assets/icons/r_p.png') no-repeat !important;
                             background-size: cover !important;
                         }
                         .active-2 {
-                            color: #fff;
+                            color: #FFF;
                             background: url('../../assets/icons/m_p.png') no-repeat !important;
                             background-size: cover !important;
                         }
                         .active-1 {
-                            color: #fff;
+                            color: #FFF;
                             background: url('../../assets/icons/l_p.png') no-repeat !important;
                             background-size: cover !important;
                         }
@@ -427,15 +445,15 @@ export default {
                                 line-height: 60px;
                                 text-align: center;
                                 font-weight:bold;
-                                color:rgba(43,138,208,1);
+                                color:#878F9D;
                                 font-weight: bold;
                             }
                         }
                     }
                     h1 {
-                        color: #2B8AD0;
+                        color: #878F9D;
                         span {
-                            background: #2B8AD0;
+                            background: #878F9D;
                         }
                     }
                 }
@@ -491,6 +509,11 @@ export default {
             }
         }
         .title {
+            .right-wrapper {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
             width:100%;
             flex:0 0 60px;
             padding: 0 20px;

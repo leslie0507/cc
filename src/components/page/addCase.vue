@@ -4,7 +4,7 @@
             <div class="title">
                 <div></div>
                 新增病例
-                <button class="el-btn btn-1">
+                <button class="el-btn btn-1" @click="$router.go(-1)">
                     <span class="triangle-left"></span>
                     返回
                 </button>
@@ -73,8 +73,9 @@ export default {
             param: {
                 strID: '',
                 strName: '',
-                nAge: '',
-                IsMan: '',
+                
+                nAge: 2209,
+                IsMan: 0,
                 Diagnosis: '该病人与2014年8月2日入住我院，症状有法定法搜捏握发生的江岸诶，大赛恩发斯蒂芬呢，发达思恩分单赛季，打发范德萨发违法的撒娇范德萨，范迪塞尔客服能会计法阿斯顿发额外发撒旦法额问哈看。该病人与2014年8月2日入住我院，症状有法定法搜捏握发生的江岸诶.'
             },
         };
@@ -83,12 +84,12 @@ export default {
     },
     methods: {
         creatMonitor(){
+            // this.param.nAge= this.param.ageYear+''+this.param.ageMouth;
             CreateNewPatient(this.param).then(res=>{
                 console.log(res)
-                
             })
             this.$router.push({
-                path: "/monitorCase"
+                path: "/monitor"
             });
         },
         chooseSex(index){

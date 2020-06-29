@@ -20,6 +20,11 @@ export default new Router({
             meta: { title: '编辑病例' }
         },
         {
+            path: '/queryMonitor',
+            component: resolve=>(require(["../components/page/queryMonitor.vue"],resolve)),
+            meta: { title: '监护病例' }
+        },
+        {
             path: '/monitorCase',
             component: resolve=>(require(["../components/page/monitorCase.vue"],resolve)),
             meta: { title: '监护病例' }

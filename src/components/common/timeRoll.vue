@@ -2,12 +2,16 @@
     <div class="time-wrapper">
       <div class="item left">
         <div class="top select-triangle-top" v-show="showTop"></div>
-        <div class="middle">12</div>
+        <div class="middle">12
+          <span>岁</span>
+        </div>
         <div class="bottom select-triangle-bottom"></div>
       </div>
       <div class="item right">
         <div class="top select-triangle-top" v-show="showTop"></div>
-        <div class="middle">00</div>
+        <div class="middle">00
+          <span>月</span>
+        </div>
         <div class="bottom select-triangle-bottom"></div>
       </div>
     </div>
@@ -79,10 +83,23 @@ export default {
       border-bottom:6px solid #4EB6CC;
     }
     .middle {
+      span {
+        position: absolute;
+        display: inline-block;
+        right: 5px;
+        bottom: 26px;
+        font-size:16px;
+        font-weight:bold;
+        color:rgba(119,127,143,1);
+        height: 16px;
+        line-height: 16px;
+        width: auto;
+      }
       position: relative;
       z-index: 2;
       font-size:56px;
       color:rgba(135,143,157,1);
+      padding-right: 14px;
     }
   }
   

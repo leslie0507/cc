@@ -14,27 +14,27 @@
         <!-- content -->
         <div class="op-content">
             <div class="op-process">
-                <div class="op-process-step">
+                <div class="op-process-step" :class="{'active':type==1}" @click="changePage(1)">
                     <div class="step-number">1</div>
                     <div class="step-name">前期准备</div>
                     <div class="step-en">Preliminary Preparation</div>
                 </div>
-                <div class="op-process-step">
+                <div class="op-process-step"  :class="{'active':type==2}" @click="changePage(2)">
                     <div class="step-number">2</div>
                     <div class="step-name">备皮脱脂</div>
                     <div class="step-en">Clean the skin</div>
                 </div>
-                <div class="op-process-step">
+                <div class="op-process-step"  :class="{'active':type==3}" @click="changePage(3)">
                     <div class="step-number">3</div>
                     <div class="step-name">连接导联线</div>
                     <div class="step-en">Connect the lead wires</div>
                 </div>
-                <div class="op-process-step">
+                <div class="op-process-step"  :class="{'active':type==4}" @click="changePage(4)">
                     <div class="step-number">4</div>
                     <div class="step-name">粘贴电极片</div>
                     <div class="step-en">Paste electrode</div>
                 </div>
-                <div class="op-process-step">
+                <div class="op-process-step" :class="{'active':type==5}" @click="changePage(5)">
                     <div class="step-number">5</div>
                     <div class="step-name">开始监护</div>
                     <div class="step-en">Start monitoring</div>
@@ -42,22 +42,70 @@
             </div>
 
             <div class="op-detail">
-                <div class="detail-content">
+                <div class="detail-content" v-show="type==1">
                     <div class="detail-img">
-                        <div class="img1">
-                            <img src="../../assets/icons/op1.png" alt="主机" />
-                            <p>主 机</p>
-                        </div>
-                        <div class="img2">
-                            <img src="../../assets/icons/op2.png" alt="电极片" />
-                            <p>电极片</p>
+                        <img src="../../assets/icons/info/1.png" alt="">
+                        <div class="title-wrapper title-wrapper-1">
+                            <div>主 机</div>
+                            <div>电极片</div>
                         </div>
                     </div>
                     <div class="detail-text">检查电源线、导联线、电极片、推剪、剃须刀、酒精、棉签等物品是否准备完好。</div>
                 </div>
+                <div class="detail-content" v-show="type==2">
+                    <div class="detail-img" >
+                        <img src="../../assets/icons/info/2.png" alt="">
+                        <div class="title-wrapper title-wrapper-2">
+                            <div>主 机</div>
+                            <div>电极片</div>
+                        </div>
+                    </div>
+                    <div class="detail-text detail-text-2">清洁粘贴位置（右图黑色框选处）的毛发，以触之不扎手为度再用酒精脱脂备皮处 3-5 次。</div>
+                </div>
+                <div class="detail-content" v-show="type==3">
+                    <div class="detail-img" >
+                        <img class="img-3" src="../../assets/icons/info/3.png" alt="">
+                        <div class="title-wrapper title-wrapper-3">
+                            <div>棕色</div>
+                            <div>绿色</div>
+                            <div>白色</div>
+                            <div>黑色</div>
+                        </div>
+                    </div>
+                    <div class="detail-text">导联线连接设备，按照①棕色、②绿色、③白色、④黑色顺序扣上电极片</div>
+                </div>
+                <div class="detail-content" v-show="type==4">
+                    <div class="detail-img detail-img-4">
+                        <img src="../../assets/icons/info/4.png" alt="">
+                        <div class="title-wrapper title-wrapper-4">
+                            <div class="operate-title">
+                                <div>左：</div>
+                                <div>
+                                    <div>④前：黑色</div>
+                                    <div>③后：白色</div>
+                                </div>
+                            </div>
+                            <div class="operate-title">
+                                <div>右：</div>
+                                <div>
+                                    <div>①前：棕色</div>
+                                    <div>②后：绿色</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-text detail-text-4">4个电极片左右两两对称，后方电极片中心（纽扣）对齐外耳道上方耳廓最高点，电极片下缘与外眼角延长线重合（如右图红线所示），前方电极片紧贴后方电极片并排，“米”字法粘贴。</div>
+                </div>
+                <div class="detail-content"  v-show="type==5">
+                    <div class="detail-img detail-img-5">
+                        <img src="../../assets/icons/info/5.png" alt="">
+                    </div>
+                    <div class="detail-text detail-text-5">开机，选择“监护”，新增病例或监护已有病例，输入病人相关信息，开始监护。</div>
+                </div>
+                
                 <div class="detail-btn">
-                    <div class="pre"></div>
-                    <div class="next">NEXT</div>
+                    <div class="pre" @click="subPage"></div>
+                    <div class="next" @click="addPage">NEXT</div>
                 </div>
             </div>
             <div class="detail-attention">
@@ -69,7 +117,33 @@
         </div>
     </div>
 </template>
-
+<script>
+export default {
+    name:'',
+    data() {
+        return {
+            type:5
+        }
+    },
+    methods:{
+        changePage(val){
+            this.type= val;
+        },
+        subPage(){
+            if(this.type==1) {
+                return
+            }
+            --this.type;
+        },
+        addPage(){
+            if(this.type==5) {
+                return
+            }
+            ++this.type;
+        }
+    }
+}
+</script>
 <style lang="scss" scoped>
 .manual-wrap {
     width: 100%;
@@ -140,6 +214,19 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 40px;
+            // 默认选中第一个
+            .active {
+                .step-number {
+                    border: 2px solid rgba(1, 145, 113, 1) !important;;
+                    background: rgba(1, 145, 113, 1) !important;;
+                    border-radius: 50%;
+                    color: #ffffff !important;
+                }
+                .step-name,
+                .step-en {
+                    color: #019171 !important;;
+                }
+            }
             .op-process-step {
                 cursor: pointer;
                 display: flex;
@@ -172,31 +259,19 @@
                     font-weight: 500;
                     color: #7d7d7d;
                 }
-                &:hover {
-                    .step-number {
-                        border: 2px solid rgba(1, 145, 113, 1);
-                        background: rgba(1, 145, 113, 1);
-                        border-radius: 50%;
-                        color: #ffffff;
-                    }
-                    .step-name,
-                    .step-en {
-                        color: #019171;
-                    }
-                }
-                // 默认选中第一个
-                &:first-child {
-                    .step-number {
-                        border: 2px solid rgba(1, 145, 113, 1);
-                        background: rgba(1, 145, 113, 1);
-                        border-radius: 50%;
-                        color: #ffffff;
-                    }
-                    .step-name,
-                    .step-en {
-                        color: #019171;
-                    }
-                }
+                // &:hover {
+                //     .step-number {
+                //         border: 2px solid rgba(1, 145, 113, 1);
+                //         background: rgba(1, 145, 113, 1);
+                //         border-radius: 50%;
+                //         color: #ffffff;
+                //     }
+                //     .step-name,
+                //     .step-en {
+                //         color: #019171;
+                //     }
+                // }
+               
             }
         }
         .op-detail {
@@ -211,14 +286,70 @@
                 justify-content: space-between;
                 align-items: center;
                 margin: 0px 0px 0px 50px;
+                .detail-img-5 {
+                    img {
+                        margin-top: 15px;
+                        height: 225px !important;
+                    }
+                }
+                .detail-img-4 {
+                    img {
+                        height: 145px !important;
+                    }
+                    margin-top: 40px !important;
+                }
                 .detail-img {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                    flex-direction: column;
                     width: 290px;
-                    .img1,
-                    .img2 {
-                        height: 204px;
+                    margin-top: 15px;
+                    .img-3 {
+                        height: auto !important;
+                        width: 300px !important;
+                        margin-top: 30px;
+                    }
+                    .title-wrapper-4 {
+                        padding: 0 25px 0 10px;
+                    }
+                    .title-wrapper-3 {
+                        padding: 0 15px 0 0px;
+                    }
+                    .title-wrapper-2 {
+                        padding: 0 65px 0 55px;
+                    }
+                    .title-wrapper-1 {
+                        padding: 0 35px 0 55px;
+                    }
+                    .operate-title {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        margin-top: 20px;
+                        div {
+                            line-height: 25px !important;
+                            font-weight: bold !important;
+                            opacity: 1 !important;
+                        }
+                    }
+                    .title-wrapper {
+                        div {
+                            font-size:16px;
+                            font-weight:300;
+                            color:rgba(0,0,0,1);
+                            line-height:38px;
+                            opacity:0.8
+                        }
+                        width: 100%;
+                        box-sizing: border-box;
+                        flex: 1;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                    img {
+                        height: 150px;
                         display: flex;
                         flex-direction: column;
                         justify-content: flex-end;
@@ -252,6 +383,18 @@
                     line-height: 38px;
                     opacity: 0.8;
                     margin-right: 99px;
+                }
+                .detail-text-2 {
+                    width: 340px;
+                    margin-right: 80px;
+                }   
+                .detail-text-5 {
+                    width: 450px;
+                    margin-right: 30px;
+                }   
+                .detail-text-4 {
+                    width: 460px;
+                    margin-right: 40px;
                 }
             }
             .detail-btn {

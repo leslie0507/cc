@@ -37,9 +37,9 @@
                     <div class="params-item">
                         <div class="text">脑梗塞</div>
                         <div class="fill-box">
-                            <button class="el-btn btn-zuhe-actived el-btn-wu-actived">无</button>
-                            <button class="el-btn el-btn-youhuaisi">有坏死</button>
-                            <button class="el-btn el-btn-wuhuaisi">无坏死</button>
+                            <button class="el-btn btn-zuhe-actived " :class="{'el-btn-wu-actived':lgs==1}" @click="clcikLgs(1)">无</button>
+                            <button class="el-btn el-btn-youhuaisi"  :class="{'el-btn-wu-actived':lgs==2}" @click="clcikLgs(2)">有坏死</button>
+                            <button class="el-btn el-btn-wuhuaisi"  :class="{'el-btn-wu-actived_3':lgs==3}" @click="clcikLgs(3)">无坏死</button>
                         </div>
                         <button class="el-btn el-btn-unknown">未知</button>
                     </div>
@@ -100,10 +100,13 @@ export default {
     name:'',
     data() {
         return {
-            
+            lgs:1
         }
     },
     methods: {
+        clcikLgs(val){
+            this.lgs= val;
+        },
         goMonitor(){
             this.$router.push({
                 path: "/monitor",
@@ -320,11 +323,24 @@ textarea {
                             background-size: cover;
                             border-radius: 0px;
                         }
+                        .btn-zuhe-actived {
+                            width: 49px;
+                            height: 38px;
+                            background: url(../../assets/icons/l_us_5.png) no-repeat;
+                            background-size: cover;
+                            border-radius: 0px;
+                        }
                         .el-btn-wu-actived {
                             width: 49px;
                             height: 38px;
                             color: #ffffff;
                             background: url(../../assets/icons/l_s_5.png) no-repeat;
+                            background-size: cover;
+                            border-radius: 0px;
+                        }
+                        .el-btn-wu-actived_3 {
+                            color: #ffffff;
+                            background: url(../../assets/icons/r_s.png) no-repeat !important;
                             background-size: cover;
                             border-radius: 0px;
                         }

@@ -20,7 +20,7 @@
                 <div class="btn-top">
                     <img src="../../assets/icons/btn-top2.png" alt="bg1" />
                 </div>
-                <button class="btn-bottom" @click="goMonitorCase">
+                <button class="btn-bottom" @click="goMonitorCase(1)">
                     <span class="btn-icon-left icon2"></span>
                     <span class="btn-text-left">查 询</span>
                 </button>
@@ -29,7 +29,7 @@
                 <div class="btn-top">
                     <img src="../../assets/icons/btn-top3.png" alt="bg1" />
                 </div>
-                <button class="btn-bottom" @click="goMonitorCase">
+                <button class="btn-bottom" @click="goMonitorCase(2)">
                     <span class="btn-icon-left icon3"></span>
                     <span class="btn-text-left">档 案</span>
                 </button>
@@ -85,10 +85,17 @@ export default {
                 path: "/monitor",
             });
         },
-        goMonitorCase(){
-            this.$router.push({
-                path: "/monitorCase",
-            });
+        goMonitorCase(type){
+            if(type==1) {
+                this.$router.push({
+                    path: "/monitorCase",
+                });
+            }else {
+                this.$router.push({
+                    path: "/queryMonitor",
+                });
+            }
+           
         }
     },
 }

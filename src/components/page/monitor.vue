@@ -229,9 +229,7 @@ export default {
            this.isClose= !this.isClose; 
         },
         goHomePage(){
-            this.$router.push({
-                path: "/kidNav",
-            });
+            this.$router.go(-1);
         },
         goModifyCase(){
             this.$router.push({
@@ -377,7 +375,7 @@ export default {
                 grid: {
                     left: type=='ICPValue'?'4%':'3%',
                     right: '2%',
-                    bottom: '1%',
+                    bottom: '3%',
                     top:'10',
                     containLabel: true
                 },
@@ -438,8 +436,9 @@ export default {
                     },
                     // EdemaValue ICPValue PerturbValue
                     min:0,
+                    splitNumber: 4, 
                     max:type=='PerturbValue'?250:type=='EdemaValue'?200:50,
-                    minInterval:type=='PerturbValue'?50:type=='EdemaValue'?40:10
+                    // minInterval:type=='PerturbValue'?50:type=='EdemaValue'?40:10
                 },
                 series: [
                     {
@@ -556,13 +555,13 @@ export default {
             flex-direction: column;
             div {
                 &:nth-child(1) {
-                    flex: 3;
+                    flex: 1;
                 }
                 &:nth-child(2) {
-                    flex: 3;
+                    flex: 1;
                 }
                 &:nth-child(3) {
-                    flex: 4;
+                    flex: 1;
                 }
                 width: 100%;
             }
@@ -864,6 +863,7 @@ export default {
 }
 .time-wrapper {
     .time-con {
+        width: 145px;
         font-size:38px;
         font-weight:bold;
         color:rgba(1,146,114,1);
