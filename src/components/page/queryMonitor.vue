@@ -19,11 +19,11 @@
                     <div class="info-wrapper">
                         <div class="item">
                             <div class="label">编号:</div>
-                            <div class="value">202010368</div>
+                            <div class="value">{{showData&&showData.strID}}</div>
                         </div>
                         <div class="item">
                             <div class="label">姓名:</div>
-                            <div class="value">约翰尼德普</div>
+                            <div class="value">{{showData&&showData.strName}}</div>
                         </div>
                     </div>
 
@@ -102,7 +102,7 @@ export default {
     data: function() {
         return {
             showData:{},
-            clickIndex:-1,
+            clickIndex:0,
             tableData:[],
             sexType:1
         };
@@ -116,8 +116,12 @@ export default {
             this.sexType=val;
         },
         checkMonitor(){
+            sessionStorage.setItem('item-user-info',JSON.stringify(this.showData));
             this.$router.push({
-                path: "/monitor"
+                name: "monitor",
+                params:{
+                    ...this.showData
+                }
             });
         },
         showDetail(item,index){
@@ -126,7 +130,9 @@ export default {
         },
         getData(){
             ScanPatient().then(res=> {
+                console.log(res)
                 this.tableData = res.data.slice(0,5);
+                this.showData= this.tableData[0]
             })
         },
         addCase(){

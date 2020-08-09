@@ -119,7 +119,7 @@
                                 <div class="value">25</div>
                             </div>
 
-                            <div class="text-info">*排除开颅、肿瘤</div>
+                            <!-- <div class="text-info">*排除开颅、肿瘤</div> -->
                         </div>
                     </div>
                     <div class="right">
@@ -131,7 +131,7 @@
                         <div class="right-chart">
                             <div id="chart1"></div>
                             <div id="chart2"></div>
-                            <div id="chart3"></div>
+                            <!-- <div id="chart3"></div> -->
                         </div>
                     </div>
                 </div>

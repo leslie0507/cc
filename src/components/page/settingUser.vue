@@ -13,12 +13,12 @@
                 <div class="input-wrapper">
                     <div class="hosp-name">
                         <span>医院名称</span>
-                        <input class="el-input setting-user-input" type="text" />
+                        <input class="el-input setting-user-input" type="text" v-model="user" @blur="save"/>
                     </div>
 
                     <div class="user-pwd">
                         <span>用户密码</span>
-                        <input class="el-input setting-user-input" type="password" />
+                        <input class="el-input setting-user-input" type="password" v-model="password"   @blur="save"/>
                     </div>
                 </div>
             </div>
@@ -27,29 +27,12 @@
 </template>
 
 <script>
-import { Login } from '@/api/user';
-import { queryPostList } from '@/api/data';
-let passwordRule = (rule, value, callback) => {
-    if (value.length >= 6) {
-        callback();
-    } else {
-        callback(new Error('密码长度不能少于6位'));
-    }
-};
+import { UserSetting } from '@/api/monitor';
 export default {
-    data: function() {
+    data() {
         return {
-            param: {
-                username: '',
-                password: ''
-            },
-            rules: {
-                username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
-                password: [
-                    { required: true, message: '密码不能为空', trigger: 'blur' },
-                    { validator: passwordRule, trigger: 'blur' }
-                ]
-            }
+            user:'',
+            password:''
         };
     },
     created() {
@@ -57,34 +40,13 @@ export default {
         this.param.username = sessionStorage.getItem('userName');
     },
     methods: {
-        submitForm() {
-            this.$refs.login.validate(valid => {
-                if (valid) {
-                    Login({
-                        account: this.param.username,
-                        pwd: this.param.password
-                    })
-                        .then(res => {
-                            console.log(this.respSuccess(res));
-                            if (!this.respSuccess(res)) {
-                                this.resNotice.warning(res.msg, this.respMessage(res));
-                                return;
-                            }
-                            sessionStorage.setItem('ms_user', JSON.stringify(res.data));
-                            queryPostList().then(res => {
-                                sessionStorage.setItem('expressList', JSON.stringify(res.data));
-                                sessionStorage.setItem('userName', this.param.username);
-                                this.$router.push('/');
-                            });
-                        })
-                        .catch(err => {
-                            console.log(err);
-                        });
-                } else {
-                    console.log('error submit!!');
-                    return false;
-                }
-            });
+        save(){
+            UserSetting({
+                user:this.user,
+                password:this.password
+            }).then(res=>{
+                console.log(res)
+            })
         },
         goSetting(){
             this.$router.push({

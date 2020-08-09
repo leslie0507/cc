@@ -13,28 +13,28 @@
                 <!-- 文本框区域 -->
                 <div class="input-wrapper">
                     <div>
-                        <input class="el-input setting-time-input" type="text" />
+                        <input class="el-input setting-time-input" v-model="year" placeholder="年" type="text" />
                     </div>
                     <div>
-                        <input class="el-input setting-time-input" type="text" />
+                        <input class="el-input setting-time-input" v-model="month" placeholder="月" type="text" />
                     </div>
                     <div>
-                        <input class="el-input setting-time-input" type="text" />
+                        <input class="el-input setting-time-input" v-model="day" placeholder="日" type="text" />
                     </div>
                     <div>
-                        <input class="el-input setting-time-input" type="text" />
+                        <input class="el-input setting-time-input" v-model="hour" placeholder="时" type="text" />
                     </div>
                     <div>
-                        <input class="el-input setting-time-input" type="text" />
+                        <input class="el-input setting-time-input" v-model="minute" placeholder="分" type="text" />
                     </div>
                 </div>
                 <!-- 时间显示区域 -->
                 <div class="time-show-wrapper">
-                    <p>2014/9/5 15:55</p>
+                    <p>{{nowData}}</p>
                 </div>
                 <!-- 按钮区域 -->
                 <div class="btn-wrapper">
-                    <button class="el-btn btn-save">保存修改</button>
+                    <button class="el-btn btn-save" @click="saveTime">保存修改</button>
                 </div>
             </div>
         </div>
@@ -42,64 +42,36 @@
 </template>
 
 <script>
-import { Login } from '@/api/user';
-import { queryPostList } from '@/api/data';
-let passwordRule = (rule, value, callback) => {
-    if (value.length >= 6) {
-        callback();
-    } else {
-        callback(new Error('密码长度不能少于6位'));
-    }
-};
+import moment from 'moment';
+import { SetSystemTime } from '@/api/monitor';
 export default {
-    data: function() {
+    data() {
         return {
-            param: {
-                username: '',
-                password: ''
-            },
-            rules: {
-                username: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
-                password: [
-                    { required: true, message: '密码不能为空', trigger: 'blur' },
-                    { validator: passwordRule, trigger: 'blur' }
-                ]
-            }
+            year: '',
+            month: '',
+            day: '',
+            hour: '',
+            minute: '',
+            nowData:''
         };
     },
-    created() {
-        sessionStorage.removeItem('ms_user');
-        this.param.username = sessionStorage.getItem('userName');
+    created(){
+        this.nowData = moment(new Date()).format("YYYY/M/D HH:mm");
+        setTimeout(()=>{
+            this.nowData = moment(new Date()).format("YYYY/M/D HH:mm");
+        },1000*60)
     },
     methods: {
-        submitForm() {
-            this.$refs.login.validate(valid => {
-                if (valid) {
-                    Login({
-                        account: this.param.username,
-                        pwd: this.param.password
-                    })
-                        .then(res => {
-                            console.log(this.respSuccess(res));
-                            if (!this.respSuccess(res)) {
-                                this.resNotice.warning(res.msg, this.respMessage(res));
-                                return;
-                            }
-                            sessionStorage.setItem('ms_user', JSON.stringify(res.data));
-                            queryPostList().then(res => {
-                                sessionStorage.setItem('expressList', JSON.stringify(res.data));
-                                sessionStorage.setItem('userName', this.param.username);
-                                this.$router.push('/');
-                            });
-                        })
-                        .catch(err => {
-                            console.log(err);
-                        });
-                } else {
-                    console.log('error submit!!');
-                    return false;
-                }
-            });
+        saveTime(){
+            SetSystemTime({
+                year: this.year,
+                month: this.month,
+                day: this.day,
+                hour: this.hour,
+                minute: this.minute,
+            }).then(res=>{
+                console.log(res)
+            })
         },
         goSetting(){
             this.$router.push({

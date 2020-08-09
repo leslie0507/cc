@@ -16,11 +16,11 @@
                     <div class="info-wrapper">
                         <div class="item">
                             <div class="label">编号:</div>
-                            <div class="value">202010368</div>
+                            <div class="value">{{showData&&showData.strID}}</div>
                         </div>
                         <div class="item">
                             <div class="label">姓名:</div>
-                            <div class="value">约翰尼德普</div>
+                            <div class="value">{{showData&&showData.strName}}</div>
                         </div>
                     </div>
 

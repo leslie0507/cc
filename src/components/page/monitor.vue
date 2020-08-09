@@ -12,37 +12,37 @@
             <div class="input-wrapper">
                 <div class="userinfo">
                     <div class="img-wrapper">
-                        <img src="" alt="">
+                        <img src="../../assets/icons/user.png" alt="">
                     </div>
                     <!-- 头像 -->
                     <div class="info-wrapper">
                         <div class="item">
                             <div class="label">编号:</div>
-                            <div class="value">202010368</div>
+                            <div class="value">{{userInfo&&userInfo.strID}}</div>
                         </div>
                         <div class="item">
                             <div class="label">姓名:</div>
-                            <div class="value">约翰尼德普</div>
+                            <div class="value">{{userInfo&&userInfo.strName}}</div>
                         </div>
                         <div class="item">
                             <div class="label">年龄:</div>
-                            <div class="value">50</div>
+                            <div class="value">{{userInfo&&userInfo.nAge | ageText}}</div>
                         </div>
                         <div class="item">
                             <div class="label">性别:</div>
-                            <div class="value">男</div>
+                            <div class="value">{{userInfo&&userInfo.IsMan?'男':'女'}}</div>
                         </div>
                     </div>
 
                     <div class="line"></div>
 
                     <div class="select-container">
-                        <el-input label="脑积水" v-model="elName"></el-input>
-                        <el-input label="脑血肿" v-model="elName"></el-input>
+                        <el-input label="脑积水" v-model="HemaBefore"></el-input>
+                        <el-input label="脑血肿" v-model="HydrocephalusValue"></el-input>
                         <el-input label="脑萎缩" v-model="elName"></el-input>
                     </div>
 
-                    <div class="el-btn-info-lv begin-btn">开 始</div>
+                    <div class="el-btn-info-lv begin-btn" @click="beginWatch">开 始</div>
 
                     <div class="time-wrapper">
                         <div class="time-text">
@@ -54,7 +54,7 @@
                             {{hour}}:{{min}}:{{second}}
                         </div>
 
-                        <el-input class="monitor" label="监护时间" endLabel="分钟" v-model="elName"></el-input>
+                        <el-input class="monitor" label="监护时间" endLabel="分钟" v-model="guardTime"></el-input>
                     </div>
 
                     <div class="btn-wrapper">
@@ -114,7 +114,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="left-item" v-if="isClose" style="position:relative;">
+                            <!-- <div class="left-item" v-if="isClose" style="position:relative;">
                                 <div class="text-werapper">
                                     <div>颅内压</div>
                                     <div style="width:100%;text-align:left;">Brain Edema</div>
@@ -130,9 +130,9 @@
                                         <div class="switch-radio"></div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
-                            <div class="text-info">*排除开颅、肿瘤</div>
+                            <!-- <div class="text-info">*排除开颅、肿瘤</div> -->
                         </div>
                     </div>
                     <div class="right">
@@ -162,7 +162,7 @@
                         <div class="right-chart">
                             <div id="chart1"></div>
                             <div id="chart2"></div>
-                            <div id="chart3" :style="{'visibility':!isClose?'hidden':''}"></div>
+                            <!-- <div id="chart3" :style="{'visibility':!isClose?'hidden':''}"></div> -->
                             <!-- BNPerturbValue   扰动系数
                             BNEdemaValue   水肿系数
                             BNICPValue   颅内压 -->
@@ -183,6 +183,7 @@
 import moment from 'moment';
 import { Login } from '@/api/user';
 import { queryPostList } from '@/api/data';
+import { StartGuard } from '@/api/monitor';
 export default {
     data: function() {
         return {
@@ -202,17 +203,37 @@ export default {
             hour: '00',
             min: '00',
             second: '00',
+            
 
+            strID:'',
+            guardTime:'', //监护时间
+            AtroFlags:'',
+            GCS:'',
+            InfarFlags:'',
+            HydrFlags:'',
+            HydrocephalusValue:'',
+            HemaFlags:'',
+            HemaBefore:'',
+            HemaAfter:'',
+
+            userInfo:{},
         };
     },
     created(){
+        this.userInfo = JSON.parse(sessionStorage.getItem('item-user-info')) || this.$route.params;
+        this.strID = this.$route.params.strID;
+
         this.initWebSocket();
+    },
+    mounted(){
+        
     },
     destroyed: function() {
         //页面销毁时关闭长连接
         this.websocketclose();
     },
     mounted(){
+        console.log(this.$route)
         this.curStartTime = '2020-08-09'
         this.countTime();
         this.drawChart()
@@ -224,12 +245,76 @@ export default {
             return lastItem[0];
         }
     },
+    filters:{
+        ageText(val){
+            console.log(val)
+            return (val+'').substr(0,2) || '';
+        }
+    },
     methods: {
+        beginWatch(){
+            this.loadTime(this.guardTime);
+            StartGuard({
+                strID:this.strID,
+                guardTime:this.guardTime,
+                AtroFlags:this.AtroFlags,
+                GCS:this.GCS,
+                InfarFlags:this.InfarFlags,
+                HydrFlags:this.HydrFlags,
+                HydrocephalusValue:this.HydrocephalusValue,
+                HemaFlags:this.HemaFlags,
+                HemaBefore:this.HemaBefore,
+                HemaAfter:this.HemaAfter
+            }).then(res=>{
+                console.log(res)
+            })
+        },
+        loadTime(time){
+            let timer;
+            timer && clearInterval(timer);
+            let end =  moment(new Date()).add(time, 'minutes').valueOf() + 1000;//设置截止时间
+            let countTime = ()=>{
+                let now = new Date().getTime();    
+                let leftTime = end - now; //时间差
+                console.log('时间差',leftTime)
+                let d, h, m, s, ms;
+                if(leftTime >= 0) {
+                    // d = Math.floor(leftTime / 1000 / 60 / 60 / 24);
+                    h = Math.floor(leftTime / 1000 / 60 / 60);
+                    m = Math.floor(leftTime / 1000 / 60 % 60);
+                    s = Math.floor(leftTime / 1000 % 60);
+                    ms = Math.floor(leftTime % 1000);
+                    if(ms < 100) {
+                        ms = "0" + ms;
+                    }
+                    if(s < 10) {
+                        s = "0" + s;
+                    }
+                    if(m < 10) {
+                        m = "0" + m;
+                    }
+                    if(h < 10) {
+                        h = "0" + h;
+                    }
+                } else {
+                    console.log('已截止')
+                }
+                this.hour = h;
+                this.min = m;
+                this.second = s ;
+                console.log(h,m,s)
+            }
+            timer = setInterval(()=>{
+                countTime();
+            }, 1000);
+        },
         switchItem(){
            this.isClose= !this.isClose; 
         },
         goHomePage(){
-            this.$router.go(-1);
+            this.$router.push({
+                path:'/queryMonitor'
+            });
         },
         goModifyCase(){
             this.$router.push({
@@ -335,7 +420,7 @@ export default {
         drawChart(){
             this.drawChatOne('rgba(197, 35, 231, 1)','rgba(197, 35, 231, 0)','chart1','PerturbValue');
             this.drawChatOne('rgba(60, 167, 230, 1)','rgba(60, 167, 230, 0)','chart2','EdemaValue');
-            this.drawChatOne('rgba(247, 187, 87, 1)','rgba(247, 187, 87, 0)','chart3','ICPValue');
+            // this.drawChatOne('rgba(247, 187, 87, 1)','rgba(247, 187, 87, 0)','chart3','ICPValue');
         },
         drawChatOne(color,color1,id,type){
             let xData = this.chartTime.slice(-7);
@@ -386,9 +471,9 @@ export default {
                     type: 'category',
                     inverse:true,   //此属性控制方向,默认为false,改为true就达到你要的要求了
                     boundaryGap:false,
-                    // label: {
-                    //     show: false
-                    // },
+                    label: {
+                        show: true
+                    },
                     axisTick: {
                         show: false
                     },
@@ -543,7 +628,9 @@ export default {
                 font-weight:400;
                 color:rgba(1,146,114,1);
                 position: absolute;
-                right: 4px;
+                right: 5px;
+                width: 5px;
+                word-break: break-word;
                 bottom: 4px;
             }
             position: relative;
@@ -776,7 +863,7 @@ export default {
                     justify-content: space-between;
                     align-items: center;
                 }
-                height: 134px;
+                height: 224px;
                 width: 303px;
             }
         }
@@ -999,6 +1086,10 @@ export default {
                     background:rgba(255,255,255,1);
                     box-shadow:0px 2px 5px 0px rgba(12,3,6,0.2);
                     border-radius:10px;
+                    img {
+                        width: 100%;
+                        border-radius:10px;
+                    }
                 }
             }
         }

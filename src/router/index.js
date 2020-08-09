@@ -35,6 +35,7 @@ export default new Router({
             meta: { title: '修改病历' }
         },
         {
+            name:'monitor',
             path: '/monitor',
             component: resolve=>(require(["../components/page/monitor.vue"],resolve)),
             meta: { title: '实时监护' }

@@ -122,7 +122,7 @@ export default {
     name:'',
     data() {
         return {
-            type:5
+            type:1
         }
     },
     methods:{
