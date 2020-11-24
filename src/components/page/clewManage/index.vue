@@ -5,14 +5,14 @@
     <div style="height:100%;">
         <div class="static" style="position: relative;">
             <div class="search-input" style="position: absolute;z-index: 9;top: 7px; right: 24px;display: flex;justify-content: space-around;align-items: center;">
-                <el-input  clearable @change="search" v-model="searchInput" placeholder="请输入各种证号或姓名"></el-input>
-                <el-button class="icon-search" style="padding: 0 !important;border-radius: 0px 4px 4px 0px;width:47px;height:40px;box-sizing: border-box;color:#DCDFE6;border:1px solid #DCDFE6;font-size:16px;" plain @click="search"></el-button>
-                <!-- <el-input clearable placeholder="请输入各种证号或姓名" style="width:320px;height:40px;" v-model="searchInput" @change="search">
+                <ownInput  clearable @change="search" v-model="searchInput" placeholder="请输入各种证号或姓名"></ownInput>
+                <ownInput class="icon-search" style="padding: 0 !important;border-radius: 0px 4px 4px 0px;width:47px;height:40px;box-sizing: border-box;color:#DCDFE6;border:1px solid #DCDFE6;font-size:16px;" plain @click="search"></ownInput>
+                <!-- <ownInput clearable placeholder="请输入各种证号或姓名" style="width:320px;height:40px;" v-model="searchInput" @change="search">
                     <i
                         class="icon-search el-input__icon"
                         slot="suffix">
                     </i>
-                </el-input> -->
+                </ownInput> -->
             </div>
         </div>
         

@@ -16,6 +16,7 @@ export default new Router({
         },
         {
             path: '/addCase',
+            name:'addCase',
             component: resolve=>(require(["../components/page/addCase.vue"],resolve)),
             meta: { title: '编辑病例' }
         },

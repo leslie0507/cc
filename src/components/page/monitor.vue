@@ -37,14 +37,14 @@
                     <div class="line"></div>
 
                     <div class="select-container">
-                        <el-input label="脑积水" v-model="HemaBefore"></el-input>
-                        <el-input label="脑血肿" v-model="HydrocephalusValue"></el-input>
-                        <el-input label="脑萎缩" v-model="elName"></el-input>
+                        <ownInput label="头围"  endLabel="kg" v-model="HemaBefore"></ownInput>
+                        <ownInput label="体重"  endLabel="cm" v-model="HydrocephalusValue"></ownInput>
+                        <ownInput label="身高"  endLabel="cm" v-model="elName"></ownInput>
                     </div>
 
-                    <div class="el-btn-info-lv begin-btn" @click="beginWatch">开 始</div>
-
-                    <div class="time-wrapper">
+                    <div class="el-btn-info-lv begin-btn" @click="beginWatch" v-if="pathType==1&&!isBegin">开 始</div>
+                    <div class="el-btn-info-lv begin-btn" @click="cloaseWatch" v-if="pathType==1&&isBegin">停止监护</div>
+                    <div class="time-wrapper" v-show="pathType==1">
                         <div class="time-text">
                             <span>时</span>
                             <span>分</span>
@@ -54,22 +54,22 @@
                             {{hour}}:{{min}}:{{second}}
                         </div>
 
-                        <el-input class="monitor" label="监护时间" endLabel="分钟" v-model="guardTime"></el-input>
+                        <ownInput class="monitor" label="监护时间" endLabel="分钟" v-model="guardTime"></ownInput>
                     </div>
 
                     <div class="btn-wrapper">
                         <div class="el-btn el-btn-info-mlv modify" @click="goModifyCase">修改病历</div>
-                        <div class="el-btn el-btn-info-mlv print">打 印</div>
+                        <div class="el-btn el-btn-info-mlv print" @click="showPrint = true;">打 印</div>
                     </div>
 
                     <div class="save-wrapper">
                         <div class="top">
-                            <img src="../../assets/img/boen/save.png" alt="">
-                            <span>保存</span>
+                            <span>时间</span>
+                            <span>{{nowTime}}</span>
                         </div>
                         <div class="bottom">
-                            <div>TIME:10:52:30</div>
-                            <div>2020.5.16</div>
+                            <div>{{nowYear}}</div>
+                            <div>{{nowDate}}</div>
                         </div>
                     </div>
                 </div>
@@ -77,12 +77,13 @@
                 <div class="container">
                     <div class="left">
                         <div class="left-input">
-                            <el-input label="头围" endLabel="cm" v-model="elName"></el-input>
-                            <el-input label="体重" endLabel="kg" v-model="elName"></el-input>
+                            <ownInput label="脑积水" v-model="elName"></ownInput>
+                            <ownInput label="脑出血" v-model="elName"></ownInput>
                         </div>
 
                         <div class="left-item-wrapper">
-                            <div class="left-item">
+                            
+                            <div class="left-item bg-1" v-if="showCon==1 || showCon == 2">
                                 <div class="text-werapper">
                                     <div>扰动系数</div>
                                     <div style="width:100%;text-align:left;">Brain Edema</div>
@@ -94,7 +95,7 @@
                                 </div>
                                 <div class="value">{{showItem&&showItem.PerturbValue}}</div>
                             </div>
-                            <div class="left-item">
+                            <div class="left-item bg-2"  v-if="showCon==1 || showCon == 3">
                                 <div class="text-werapper">
                                     <div>水肿量</div>
                                     <div style="width:100%;text-align:left;">Brain Edema</div>
@@ -105,15 +106,17 @@
                                     </div>
                                 </div>
                                 <div class="value">{{showItem&&showItem.EdemaValue}}</div>
+                                <div class="unit" v-if="showItem&&showItem.EdemaValue">ml</div>
                             </div>
-                            <div class="left-item left-item-disabled" v-if="!isClose" style="position:relative;">
+                            <!-- <div class="left-item left-item-disabled" v-if="!isClose" style="position:relative;">
                                 <div class="label">颅内压<span>Brain Edema</span></div>
                                 <div class="switch closed" @click="switchItem">
                                     <div class="switch-wrapper">
                                         <div class="switch-radio"></div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
+                            <div class="time-label">时间 <span>time</span> </div>
                             <!-- <div class="left-item" v-if="isClose" style="position:relative;">
                                 <div class="text-werapper">
                                     <div>颅内压</div>
@@ -134,34 +137,63 @@
 
                             <!-- <div class="text-info">*排除开颅、肿瘤</div> -->
                         </div>
+
+                        <div class="status-icon">
+                            <div class="icon" :class="[isBegin?'active_1':'']"></div>
+                            <div class="icon" :class="[isBegin?'active_2':'']"></div>
+                            <div class="btn" @click="isShowChart = !isShowChart;">{{isShowChart?'收起实时数据':'查看实时数据'}}</div>
+                            <div class="chart-wrapper" v-show="isShowChart">
+                                <div id="chartOnline" style="height:200px;width:200px;"></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="right">
                        
                         <div class="right-t">
-                            <div class="select">
+                            <div class="select" @click="chooseCircle = true;">
                                 <div>单一数据/ 全部数据</div>
                             </div>
-                            <div class="x-y">
+                            <div class="x-y" :class="[xyNum==2?'active':'']" @click="changeXY">
                                 <span>X</span>
                                 <span>Y</span>
                             </div>
-                            <div class="left-top">
-                                <span>左</span>
-                                <span>上</span>
+                            <div class="left-top" @click="toPosition">
+                                <span :class="[xyNum==2?'active_t':'']">左</span>
+                                <span :class="[xyNum==1?'active_t':'']">上</span>
                             </div>
-                            <div class="right-bottom">
-                                <span>右</span>
-                                <span>下</span>
+                            <div class="right-bottom" @click="toPositionTwo">
+                                <span :class="[xyNum==2?'active_t':'']">右</span>
+                                <span :class="[xyNum==1?'active_t':'']">下</span>
                             </div>
-                            <div class="fd">放大</div>
-                            <div class="sx">缩小</div>
-                            <div class="fw">复位</div>
+                            <div class="fd" @click="scaleBig">放大</div>
+                            <div class="sx" @click="scaleSmall">缩小</div>
+                            <div class="fw" @click="resetStatus">复位</div>
                         </div>
                         
                         <!--- 图表 ---->
                         <div class="right-chart">
-                            <div id="chart1"></div>
-                            <div id="chart2"></div>
+                            <div id="chart1"  v-show="showCon==1 || showCon == 2"></div>
+                            <div id="chart2"  v-show="showCon==1 || showCon == 3"></div>
+                            <div id="chart3-wrapper">
+                                <div id="chart3"></div>
+                            </div>
+
+                            <div class="chart1-text" :class="[showCon == 2?'chart1-text_height':'']"  v-show="showCon==1 || showCon == 2">
+                                <span class="text">250</span>
+                                <span class="text">200</span>
+                                <span class="text">150</span>
+                                <span class="text">100</span>
+                                <span class="text">50</span>
+                                <span class="text">0</span>
+                            </div>
+
+                            <div class="chart1-text text-two" :class="[showCon == 3?'chart2-text_height':'']" v-show="showCon==1 || showCon == 3">
+                                <span class="text">200</span>
+                                <span class="text">150</span>
+                                <span class="text">100</span>
+                                <span class="text">50</span>
+                                <span class="text">0</span>
+                            </div>
                             <!-- <div id="chart3" :style="{'visibility':!isClose?'hidden':''}"></div> -->
                             <!-- BNPerturbValue   扰动系数
                             BNEdemaValue   水肿系数
@@ -169,12 +201,59 @@
                             <!-- <div class="time-text">
                                 
                             </div> -->
-                            <div class="time-label">时间</div>
+                           
                         </div>
                     </div>
                 </div>
             </div>
             
+        </div>
+
+        <modifyCase :modify-data="userInfo" :modify-item="modifyItem" :show-layer="showLayer" @closeLayer="showLayer = false"/>
+
+        <div class="print-wrapper" v-if="showPrint">
+            <div class="dialog-title">选择打印数据</div>
+            <div class="dialog-content">
+                <div class="item">
+                    <span>开始时间</span>
+                    <input style="width:50%;" type="text" class="ownInput ownInput-lg" placeholder />
+                </div>
+                <div class="item">
+                    <span>结束时间</span>
+                    <input style="width:50%;" type="text" class="ownInput ownInput-lg" placeholder />
+                </div>
+            </div>
+
+            <div class="dialog-btn-wrapper" style="flex-direction: row;margin-right:0px;border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;">
+                <button class="el-btn blue-btn" @click="showPrint=false">取消</button>
+                <button class="el-btn blue-btn">确认</button>
+            </div>
+        </div>
+
+        <div class="print-wrapper" v-if="chooseCircle">
+            <div class="dialog-title">选择曲线</div>
+            <div class="dialog-content">
+                <div class="item" style="justify-content: center;">
+                    <div class="radio-item" @click="chooseIndex=1">
+                        <span class="check-radio" :class="{'check-radio-actived':chooseIndex==1}"></span>
+                        <span>全部数据</span>
+                    </div>
+                </div>
+                <div class="item" style="justify-content: center;" >
+                   <div class="radio-item" @click="chooseIndex=2" >
+                        <span class="check-radio" :class="{'check-radio-actived':chooseIndex==2}"></span>
+                        <span>扰动系数</span>
+                    </div>
+                    <div class="radio-item" style="margin-left:40px"  @click="chooseIndex=3" >
+                        <span class="check-radio" :class="{'check-radio-actived':chooseIndex==3}"></span>
+                        <span>水肿系数</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dialog-btn-wrapper" style="flex-direction: row;margin-right:0px;border-bottom-left-radius: 8px;border-bottom-right-radius: 8px; justify-content:center;">
+                <button class="el-btn blue-btn" @click="confirmType">确认</button>
+            </div>
         </div>
     </div>
 </template>
@@ -183,10 +262,45 @@
 import moment from 'moment';
 import { Login } from '@/api/user';
 import { queryPostList } from '@/api/data';
-import { StartGuard } from '@/api/monitor';
+import { StartGuard,StopGuard,ScanPatientData } from '@/api/monitor';
+import modifyCase from './modifyCase';
+
+let timer,timerTwo;
 export default {
+    components:{
+        modifyCase
+    },
     data: function() {
         return {
+            modifyItem:{},
+            isShowChart:false,
+            splitNumberOne:6,
+            splitNumberTwo:4,
+            minMaxTop:{
+                min:0,
+                max:250
+            },
+            minMaxBottom:{
+                min:0,
+                max:200
+            },
+            isPos:false,  //是否不是初始位置
+            posX:0,
+            rangeNum:8,
+            scalcNum:0,
+            startY:0,
+            endY:100,
+            start:0,
+            end:100,
+            xyNum:1,
+            showCon: 1,  //1 全部  2 第一个 3第二个
+            nowTime:'', //当前时间
+            nowDate:'', //当前时间
+            nowYear:'', //当前时间
+            showPrint:false,
+            chooseCircle:false,
+            chooseIndex:1,
+            showLayer:false,
             isClose:true,
             websock: null,//建立的连接
             lockReconnect: false,//是否真正建立连接
@@ -206,37 +320,96 @@ export default {
             
 
             strID:'',
-            guardTime:'', //监护时间
-            AtroFlags:'',
-            GCS:'',
-            InfarFlags:'',
-            HydrFlags:'',
+            guardTime:15, //监护时间
+            AtroFlags:0,
+            GCS:4,
+            InfarFlags:0,
+            HydrFlags:0,
             HydrocephalusValue:'',
-            HemaFlags:'',
+            HemaFlags:-1,
             HemaBefore:'',
             HemaAfter:'',
 
             userInfo:{},
+            myChartOne:'',
+            chartDataOne:[],
+            myChartTwo:'',
+            myChartThree:'',
+            chartDataTwo:[],
+
+            pathType:1,
+            isBegin:false
         };
+    },
+    beforeDestroy(){
+        //页面销毁时关闭长连接
+        this.cloaseWatch();
+        this.websock.close();
     },
     created(){
         this.userInfo = JSON.parse(sessionStorage.getItem('item-user-info')) || this.$route.params;
-        this.strID = this.$route.params.strID;
+        this.strID = this.userInfo.strID;
+        this.pathType = this.$route.params.pathType?this.$route.params.pathType:1;
+        timerTwo = setInterval(()=>{
+            if(this.websock && this.pathType==2) {
+                ScanPatientData({
+                    strID:this.strID
+                }).then(res=>{
+                    clearInterval(timerTwo);
+                    this.chartData = res.data.map(item=>{
+                        item.dateTime =''+ moment(item.BNDT).format('hh:mm MM-DD') + ' '; //19:08 10-17
+                        return item;
+                    });
+                    console.log(this.chartData)
+                    this.setData();
+                })
+            }
+        },1000)
+       
+        // if(this.pathType==2){
+        //     setTimeout(()=>{
+        //         this.beginWatch();
+        //     },2000)
+        // }
 
+        this.nowDate = moment(new Date()).format('YYYY');
+        this.nowYear = moment(new Date()).format('MM.DD');
+        setInterval(()=>{
+            this.nowTime = moment(new Date()).format('HH:mm:ss');
+        },1000)
+        
+       
         this.initWebSocket();
     },
     mounted(){
         
-    },
-    destroyed: function() {
-        //页面销毁时关闭长连接
-        this.websocketclose();
-    },
-    mounted(){
-        console.log(this.$route)
+        this.myChartOne = this.$echarts.init(document.getElementById('chart1'));
+        this.myChartTwo = this.$echarts.init(document.getElementById('chart2'));
+        this.myChartThree = this.$echarts.init(document.getElementById('chart3'));
+        this.myChartOnline = this.$echarts.init(document.getElementById('chartOnline'));
+       
+       
+
         this.curStartTime = '2020-08-09'
-        this.countTime();
-        this.drawChart()
+        this.drawChart();
+        setTimeout(()=>{
+            this.drawOnline();
+
+            window.onresize = ()=>{
+                this.myChartOne.resize();
+                this.myChartTwo.resize();
+                this.myChartThree.resize();
+            };
+            let canvasDom =document.querySelectorAll('canvas');
+            console.log(canvasDom)
+            for(let i=1;i<canvasDom.length;i++){
+                if(i<3){
+                    canvasDom[i].style.border= `solid 2px ${i==1?'rgba(197, 35, 231, 1)':'rgba(60, 167, 230, 1)'}`;
+                    canvasDom[i].style.borderRadius= '10px'
+                }
+            }
+           
+        },0)
     },
     computed:{
         showItem(){
@@ -247,13 +420,140 @@ export default {
     },
     filters:{
         ageText(val){
-            console.log(val)
+            // console.log(val)
             return (val+'').substr(0,2) || '';
         }
     },
     methods: {
+        toPosition(){
+            this.isPos = true;
+            if(this.xyNum == 1) {
+                if(this.start>this.rangeNum) {
+                    this.start -= this.rangeNum*2;
+                    this.end -= this.rangeNum*2;
+                }
+            } else {
+                this.minMaxTop = {
+                    min:this.minMaxTop.min-15,
+                    max:this.minMaxTop.max-15
+                };
+                 this.minMaxBottom = {
+                    min:this.minMaxBottom.min-15,
+                    max:this.minMaxBottom.max-15
+                };
+                
+            }
+            
+            this.setData();
+        },
+        toPositionTwo(){
+            this.isPos = true;
+            if(this.xyNum == 1) {
+        
+                if((this.end+this.rangeNum)<100) {
+                    this.start += this.rangeNum*2;
+                    this.end += this.rangeNum*2;
+                }
+            } else {
+                this.minMaxTop = {
+                    min:this.minMaxTop.min+15,
+                    max:this.minMaxTop.max+15
+                };
+                this.minMaxBottom = {
+                    min:this.minMaxBottom.min+15,
+                    max:this.minMaxBottom.max+15
+                };
+            }
+            console.log( this.minMaxBottom)
+            this.setData();
+        },
+        scaleBig(){
+            if(this.endY>100 || this.startY<0){
+                return
+            }
+            this.splitNumberOne+=3;
+            this.splitNumberTwo+=3;
+            // this.minMaxTop = {
+            //     min:this.minMaxTop.min+35,
+            //     max:this.minMaxTop.max+35
+            // };
+            // this.minMaxBottom = {
+            //     min:this.minMaxBottom.min+35,
+            //     max:this.minMaxBottom.max+35
+            // };
+            this.startY+=3;
+            this.endY-=3;
+            console.log(this.startY,this.endY,this.splitNumberOne,this.splitNumberTwo)
+            this.setData();
+        },
+        scaleSmall(){
+            if(this.startY<0 || this.endY>100){
+                return
+            }
+            this.splitNumberOne-=3;
+            this.splitNumberTwo-=3;
+            // this.minMaxTop = {
+            //     min:this.minMaxTop.min-35,
+            //     max:this.minMaxTop.max-35
+            // };
+            // this.minMaxBottom = {
+            //     min:this.minMaxBottom.min-35,
+            //     max:this.minMaxBottom.max-35
+            // };
+            console.log(this.startY,this.endY,this.splitNumberOne,this.splitNumberTwo)
+            this.startY-=3;
+            this.endY+=3;
+            this.setData();
+        },
+        resetStatus(){
+            this.isPos = false;
+            this.minMaxTop = {
+                min:0,
+                max:250
+            };
+            this.minMaxBottom = {
+                min:0,
+                max:200
+            };
+            this.startY = 0;
+            this.endY = 100;
+            this.computedPosition(this.chartTime.length);
+            this.setData();
+        },
+        changeXY(){
+            this.xyNum = this.xyNum == 1?2:1;
+        },
+        confirmType(){
+            this.chooseCircle = false;
+            this.showCon=this.chooseIndex;
+            setTimeout(()=>{
+                this.myChartOne.resize();
+                this.myChartTwo.resize();
+                this.myChartThree.resize();
+            },100)
+           
+        },
+        cloaseWatch(){
+            
+            StopGuard().then(res=>{
+                this.isBegin = false;
+                timer && clearInterval(timer);
+            })
+        },
         beginWatch(){
+            this.isBegin = true;
+            this.myChartOne.showLoading({
+                text: '数据获取中...',
+                textStyle: { fontSize : 30 , color: '#444' },
+                effectOption: {backgroundColor: 'rgba(0, 0, 0, 0)'}
+            });
+            this.myChartTwo.showLoading({
+                text: '数据获取中...',
+                textStyle: { fontSize : 30 , color: '#444' },
+                effectOption: {backgroundColor: 'rgba(0, 0, 0, 0)'}
+            });
             this.loadTime(this.guardTime);
+            console.log(this.strID)
             StartGuard({
                 strID:this.strID,
                 guardTime:this.guardTime,
@@ -270,13 +570,15 @@ export default {
             })
         },
         loadTime(time){
-            let timer;
+            if(!time) {
+                return
+            }
+            
             timer && clearInterval(timer);
             let end =  moment(new Date()).add(time, 'minutes').valueOf() + 1000;//设置截止时间
             let countTime = ()=>{
                 let now = new Date().getTime();    
                 let leftTime = end - now; //时间差
-                console.log('时间差',leftTime)
                 let d, h, m, s, ms;
                 if(leftTime >= 0) {
                     // d = Math.floor(leftTime / 1000 / 60 / 60 / 24);
@@ -297,12 +599,14 @@ export default {
                         h = "0" + h;
                     }
                 } else {
+                    clearInterval(timer)
+                    this.cloaseWatch();
                     console.log('已截止')
                 }
                 this.hour = h;
                 this.min = m;
                 this.second = s ;
-                console.log(h,m,s)
+                // console.log(h,m,s)
             }
             timer = setInterval(()=>{
                 countTime();
@@ -312,14 +616,16 @@ export default {
            this.isClose= !this.isClose; 
         },
         goHomePage(){
+            let url = sessionStorage.getItem("backUrl");
             this.$router.push({
-                path:'/queryMonitor'
+                path:'/' + url,
+                query:{
+                    type:1
+                }
             });
         },
         goModifyCase(){
-            this.$router.push({
-                path: "/modifyCase",
-            });
+            this.showLayer = true;
         },
         initWebSocket(){//建立连接
             //初始化weosocket
@@ -356,9 +662,9 @@ export default {
             clearTimeout(that.timeoutObj);
             clearTimeout(that.serverTimeoutObj);
             //重启心跳
-            that.start();
+            that.startFun();
         },
-        start(){//开启心跳
+        startFun(){//开启心跳
             var self = this;
             self.timeoutObj && clearTimeout(self.timeoutObj);
             self.serverTimeoutObj && clearTimeout(self.serverTimeoutObj);
@@ -378,7 +684,7 @@ export default {
         },
         websocketonopen() {//连接成功事件
             //开启心跳
-            this.start();
+            this.startFun();
         },
         
         websocketonerror(e) {//连接失败事件
@@ -390,26 +696,28 @@ export default {
         websocketclose(e) {//连接关闭事件
             //关闭
             console.log( e );
-            //重连
-            this.reconnect();
         },
         // BNPerturbValue   扰动系数
         // BNEdemaValue   水肿系数
         // BNICPValue   颅内压
         websocketonmessage(event) {//接收服务器推送的信息
             //打印收到服务器的内容
-            console.log(JSON.parse(event.data));
+            console.log('接受到数据',event.data);
             let resData = JSON.parse(event.data);
             
             if(!resData.hasOwnProperty('status')) {
                 let item = JSON.parse(resData[0]);
                 item.dateTime = moment(item.datetime).format("mm:ss MM-DD ");
                 item.secondTime = moment(item.datetime).format("mm:ss");
-                this.chartTime.push(item.dateTime);
                 this.chartData.push(item);
-                this.drawChart();
+
+                this.myChartOne.hideLoading();
+                this.myChartTwo.hideLoading();
+                if(!this.isPos){
+                    this.setData();
+                }
+                
             }
-            console.log(this.chartData)
             //收到服务器信息，心跳重置
             this.reset();
         },
@@ -422,18 +730,52 @@ export default {
             this.drawChatOne('rgba(60, 167, 230, 1)','rgba(60, 167, 230, 0)','chart2','EdemaValue');
             // this.drawChatOne('rgba(247, 187, 87, 1)','rgba(247, 187, 87, 0)','chart3','ICPValue');
         },
-        drawChatOne(color,color1,id,type){
-            let xData = this.chartTime.slice(-7);
-            let yData = this.chartData.slice(-7);
-            let yDataValue = [];
-            yData.map(item=>{
-                console.log(item[type],type,item)
-                yDataValue.push(item[type]*1*Math.random())
-            })            
-            console.log(xData,yDataValue)
-            var myChartLine = this.$echarts.init(document.getElementById(id));
+        drawOnline(){
+            let option = {
+                backgroundColor: '#2c343c',
+                grid:{
+                    left:'2%',
+                    right:'0',
+                    top:'10%',
+                    bottom:'1%',
+                    containLabel:true
+                },
+                xAxis: {
+                    show:false,
+                    type: 'category',
+                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: { //轴文字标签
+                        textStyle: {
+                            color: '#B0CEFC',
+                        }
+                    },
+                    min: 200
+                },
+                series: [{
+                    itemStyle: {
+                        normal: {
+                            color: '#fff', //改变折线点的颜色
+                            lineStyle: {
+                                color: '#fff' //改变折线颜色
+                            }
+                        }
+                    },
+                    label: {
+                        color: 'rgba(255, 255, 255, 1)'
+                    },
+                    data: [210, 225, 247, 246, 245, 230, 236],
+                    type: 'line',
+                    smooth: true
+                }]
+            };
+            this.myChartOnline.setOption(option);
+        },
+        drawChatOne(color,color1,id,type){      
             let optionLine =  {
-                animation: false,
+                animation: true,
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -458,10 +800,10 @@ export default {
                     }
                 },
                 grid: {
-                    left: type=='ICPValue'?'4%':'3%',
-                    right: '2%',
-                    bottom: '3%',
-                    top:'10',
+                    left:0,
+                    right: 0,
+                    bottom: 0,
+                    top:0,
                     containLabel: true
                 },
                 xAxis: {
@@ -469,7 +811,7 @@ export default {
                         show: true,
                     },
                     type: 'category',
-                    inverse:true,   //此属性控制方向,默认为false,改为true就达到你要的要求了
+                    // // inverse:true,   //此属性控制方向,默认为false,改为true就达到你要的要求了
                     boundaryGap:false,
                     label: {
                         show: true
@@ -478,7 +820,7 @@ export default {
                         show: false
                     },
                     axisLabel: {//y轴文字的配置
-                        show: type=='ICPValue',
+                        show: true,
                         textStyle: {
                             color: '#566278'
                         },
@@ -487,15 +829,15 @@ export default {
                         }  
                     },
                     axisLine: {
-                        show: true,
+                        show: false,
                         lineStyle: {
                             color: color,
                             width: 2,
                             type: "solid"
                         },
                     },
-                    splitNumber:6,
-                    data:xData
+                    splitNumber:this.splitNumberOne,
+                    data:this.chartTime
                 },
                 yAxis: {
                     type: 'value',
@@ -503,34 +845,34 @@ export default {
                         show: true
                     },
                     axisTick: {
-                        show: false
+                        show: true
                     },
                     axisLabel: {//y轴文字的配置
+                        show: false,
                         textStyle: {
                             fontSize: '14',
                             color: "rgba(86, 98, 120, 1)",
                         },
                     },
                     axisLine: {//y轴线的颜色以及宽度
-                        show: true,
+                        show: false,
                         lineStyle: {
                             color: color,
-                            width: 2,
+                            width: 0,
                             type: "solid"
                         },
                     },
                     // EdemaValue ICPValue PerturbValue
                     min:0,
-                    splitNumber: 4, 
+                    splitNumber: this.splitNumberTwo, 
                     max:type=='PerturbValue'?250:type=='EdemaValue'?200:50,
                     // minInterval:type=='PerturbValue'?50:type=='EdemaValue'?40:10
                 },
                 series: [
                     {
-                        name:'浏览次数',
                         type:'line',
-                        stack: '总量1',
                         symbol: 'circle',
+                        smooth:true,
                         symbolSize: 5,
                         sampling: 'average',
                         itemStyle: {
@@ -540,14 +882,14 @@ export default {
                             symbol: ['none', 'none'],
                             label: {show: false},
                             data: [
-                                {xAxis: 2},
+                                {xAxis: 1},
                                 {xAxis: 3},
                                 {xAxis: 5},
                                 {xAxis: 7}
                             ]
                         },
                         areaStyle: {normal: {}},
-                        data:yDataValue,
+                        data:this.yDataValue,
                         itemStyle: {
                             normal: {
                                 color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
@@ -563,53 +905,300 @@ export default {
                     }
                 ]
             }
-            myChartLine.setOption(optionLine);
+            
+            if(id=='chart1'){
+                this.myChartOne.setOption(optionLine);
+            } else {
+                this.myChartTwo.setOption(optionLine);
+            }
+            this.myChartThree.setOption(optionLine);
+            this.myChartOne.off('click');
+            this.myChartOne.on('click', 'series',  (parmas)=> {
+                console.log(parmas.data.obj)
+                this.modifyItem = parmas.data.obj;
+            });
+            this.myChartTwo.off('click');
+            this.myChartTwo.on('click', 'series',  (parmas)=> {
+                console.log(parmas.data.obj)
+                this.modifyItem = parmas.data.obj;
+            });
         },
-        // 倒计时
-        countTime () {
-            // 获取当前时间
-            let date = new Date()
-            let now = date.getTime()
-            // 设置截止时间
-            let endDate = new Date(this.curStartTime) // this.curStartTime需要倒计时的日期
-            let end = endDate.getTime()
-            // 时间差
-            let leftTime = end - now
-            // 定义变量 d,h,m,s保存倒计时的时间
-            if (leftTime >= 0) {
-                // 天
-                this.day = Math.floor(leftTime / 1000 / 60 / 60 / 24)
-                // 时
-                let h = Math.floor(leftTime / 1000 / 60 / 60 % 24)
-                this.hour = h < 10 ? '0' + h : h
-                // 分
-                let m = Math.floor(leftTime / 1000 / 60 % 60)
-                this.min = m < 10 ? '0' + m : m
-                // 秒
-                let s = Math.floor(leftTime / 1000 % 60)
-                this.second = s < 10 ? '0' + s : s
-            } else {
-                this.day = 0
-                this.hour = '00'
-                this.min = '00'
-                this.second = '00'
+        computedPosition(length) {
+            if(this.isPos) {
+                return;
             }
-            // 等于0的时候不调用
-            if (Number(this.hour) === 0 && Number(this.day) === 0 && Number(this.min) === 0 && Number(this.second) === 0) {
-                return
-            } else {
-            // 递归每秒调用countTime方法，显示动态时间效果,
-                setTimeout(this.countTime, 1000)
-            }
-        },　
+            this.end = 100;
+            length <= this.rangeNum
+            ? this.start = 0
+            : this.start = (100 - Math.floor(this.rangeNum / length * 100));
+           
+            
+            // this.start = (this.start-this.scalcNum)>0?(this.start-this.scalcNum):this.start;
+            // this.end = (this.end-this.scalcNum)>0?(this.end-this.scalcNum):this.end;;
+            // length <= this.rangeNum ? this.start = 0: this.start = (100 - Math.floor(this.rangeNum / length * 100));
+            // return this.start;
+        },
+        setData(){
+            console.log('开始加载图表')
+            this.chartDataOne = [];
+            this.chartDataTwo = [];
+            this.chartTime = [];
+            this.chartData.map(item=>{
+                this.chartDataOne.push({
+                    value:item['PerturbValue'],
+                    obj:item
+                })
+                this.chartDataTwo.push({
+                    value:item['EdemaValue'],
+                    obj:item
+                })
+                this.chartTime.push(item.dateTime);
+            });
+            
+            this.computedPosition(this.chartTime.length);
+            let dataZoom = [];
+            dataZoom= [
+                {
+                    type: 'slider',
+                    show: false,
+                    xAxisIndex: 0,
+                    end: this.end,
+                    start: this.start//xArraylength是x轴返回的数据的个数
+                },
+                {
+                    type: 'slider',
+                    show: false,
+                    yAxisIndex: 0,
+                    start:this.startY,
+                    end:this.endY,
+                }
+            ];
+
+            console.log('dataZoom++++++',dataZoom,this.start,this.end)
+            this.myChartOne.setOption({
+                dataZoom: dataZoom,
+                yAxis: {
+                    axisLine: {//y轴线的颜色以及宽度
+                        show: false,
+                    },
+                    min:this.minMaxTop.min,
+                    max: this.minMaxTop.max
+                    // minInterval:type=='PerturbValue'?50:type=='EdemaValue'?40:10
+                },
+                xAxis: {
+                    splitLine: {
+                        show: true,
+                    },
+                    type: 'category',
+                    // // inverse:true,   //此属性控制方向,默认为false,改为true就达到你要的要求了
+                    boundaryGap:false,
+                    label: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {//y轴文字的配置
+                        show: false,
+                        textStyle: {
+                            color: '#566278'
+                        },
+                        formatter:function(value){  
+                            return value.split(" ").join("\n");  
+                        }  
+                    },
+                    axisLine: {
+                        show: false,
+                        // lineStyle: {
+                        //     color: color,
+                        //     width: 2,
+                        //     type: "solid"
+                        // },
+                    },
+                    splitNumber:this.splitNumberOne,
+                    data:this.chartTime
+                },
+                series: [{
+                    data: this.chartDataOne
+                }]
+            });
+            
+            let options = {
+                dataZoom: dataZoom,
+                xAxis: {
+                    splitLine: {
+                        show: true,
+                    },
+                    type: 'category',
+                    // // inverse:true,   //此属性控制方向,默认为false,改为true就达到你要的要求了
+                    boundaryGap:false,
+                    label: {
+                        show: true
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        show: false,
+                        textStyle:{
+                            color:"#566278", //刻度颜色
+                            fontSize:18  //刻度大小
+                        },
+                        formatter:function(value){  
+                            return value.split(" ").join("\n");  
+                        }  
+                    },
+                    axisLine: {
+                        show: false,
+                        // lineStyle: {
+                        //     color: color,
+                        //     width: 2,
+                        //     type: "solid"
+                        // },
+                    },
+                    splitNumber:6,
+                    data:this.chartTime
+                },
+                yAxis: {
+                    axisLine: {//y轴线的颜色以及宽度
+                        show: false,
+                    },
+                    min:this.minMaxBottom.min,
+                    max: this.minMaxBottom.max
+                    // minInterval:type=='PerturbValue'?50:type=='EdemaValue'?40:10
+                },
+                series: [{
+                    data: this.chartDataTwo
+                }]
+            };
+            this.myChartTwo.setOption(options);
+            options.xAxis.axisLabel= {
+                show: true,
+                textStyle:{
+                    color:"#566278", //刻度颜色
+                    fontSize:17  //刻度大小
+                },
+                formatter:function(value){  
+                    return value.split(" ").join("\n");  
+                }  
+            };
+            options.yAxis.min = 0;
+            options.yAxis.max = 200;
+            this.myChartThree.setOption(options);
+        },
     },
 };
 </script>
 
 <style lang="scss" scoped>
-#chart1 {
+/deep/ #chartOnline {
+    canvas {
+        border-radius: 5px;
+    }
+}
+.radio-item {
+    display: flex;
+    justify-content:center;
+    align-items: center;
+}
+.check-radio-actived {
+    cursor: pointer;
+    background: url(../../assets/img/boen/raiod_active.png) no-repeat !important;
+    background-size: cover;
+    background-position: center center;
+}
+.check-radio {
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 5px;
+    width: 18px;
+    height: 18px;
+    background: url(../../assets/img/boen/raiod.png) no-repeat;
+    background-size: cover;
+}
+
+.dialog-btn-wrapper {
+    width: 338px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #E1EBEF;
+    padding:  0 30px 30px;
+    box-sizing: border-box;
+    //蓝色按钮
+    .blue-btn {
+        width: 128px;
+        height: 40px;
+        background: url(../../assets/icons/blue-btn.png) no-repeat;
+        background-size: cover;
+        font-size: 18px;
+        color: rgba(255, 255, 255, 1);
+
+        line-height: 40px;
+        font-weight: bold;
+    }
+}
+.print-wrapper {
+    height: 289px;
+    background: #E1EBEF;
+    .dialog-title {
+        width: 338px;
+        height: 60px;
+        line-height: 60px;
+        background: linear-gradient(0deg, #E5E5E5, #FFFFFF);
+        font-size: 22px;
+        font-weight: bold;
+        color: #777F8F;
+        text-shadow: 0px 1px 0px #FFFFFF;
+        text-align: center;
+        
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .dialog-content {
+        background: #E1EBEF;
+        .item {
+            input {
+                height: 26px;
+                width: 65%;
+            }
+            width: 100%;
+            height: 90px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            &:first-child {
+                border-bottom: 1px solid #CBCBCB;
+            }
+            span {
+                font-size: 17px;
+                font-weight: bold;
+                color: #777F8F;
+            }
+        }
+        padding:  0 30px 0px;
+        box-sizing: border-box;
+        width: 338px;
+        
+        box-shadow: 0px 4px 10px 0px rgba(11, 3, 6, 0.2);
+    }
+    border-radius: 8px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
     width: 100%;
-    height: 250px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: rgba(0,0,0,.3);
+}
+#chart1 {
+    margin-bottom: 15px;    
+}
+#chart2 {
 }
 /deep/ .monitor {
     input {
@@ -621,53 +1210,182 @@ export default {
 }
 .container {
     .right {
+        display: flex;
+        flex-direction: column;
         .right-chart {
-            .time-label {
-                width: auto;
-                font-size:14px;
-                font-weight:400;
-                color:rgba(1,146,114,1);
-                position: absolute;
-                right: 5px;
-                width: 5px;
-                word-break: break-word;
-                bottom: 4px;
+            flex:1;
+            .chart1-text_height {
+                .text {
+                    &:nth-child(1) {
+                        // margin-top: 50px;
+                    }
+                    &:nth-child(2) {
+                        margin-top:50px !important;
+                    }
+                    &:nth-child(3) {
+                        margin-top: 55px !important;
+                    }
+                    &:nth-child(4) {
+                        margin-top: 55px !important;
+                    }
+                    &:nth-child(5) {
+                        margin-top: 55px !important;
+                    }
+                    &:nth-child(6) {
+                        margin-top: 55px !important; 
+                    }
+                }
             }
+
+            .chart2-text_height {
+                top: 0 !important;
+                .text {
+                    font-size: 16px;
+                    color: #333;
+                    &:nth-child(1) {
+                        // margin-top: 50px;
+                    }
+                    &:nth-child(2) {
+                        margin-top:72px !important;
+                    }
+                    &:nth-child(3) {
+                        margin-top: 77px !important;
+                    }
+                    &:nth-child(4) {
+                        margin-top: 80px !important;
+                    }
+                    &:nth-child(5) {
+                        margin-top: 75px !important;
+                    }
+                    &:nth-child(6) {
+                        margin-top: 55px !important; 
+                    }
+                }
+            }
+            .chart1-text {
+                width: 6%;
+                padding-right: 10px;
+                box-sizing: border-box;
+                .text {
+                    color: rgb(88,100,121);
+                    font-size: 16px;
+                    color: #333;
+                    &:nth-child(1) {
+                        // margin-top: 50px;
+                    }
+                    &:nth-child(2) {
+                        margin-top: 12px;
+                    }
+                    &:nth-child(3) {
+                        margin-top: 20px;
+                    }
+                    &:nth-child(4) {
+                        margin-top: 20px;
+                    }
+                    &:nth-child(5) {
+                       margin-top: 15px; 
+                    }
+                    &:nth-child(6) {
+                       margin-top: 15px; 
+                    }
+                }
+                top: 0;
+                left: 0;
+                position:absolute;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+            }
+            .text-two {
+                .text {
+                    font-size: 16px;
+                    color: #333;
+                    &:nth-child(1) {
+                        margin-top: 5px;
+                    }
+                    &:nth-child(2) {
+                        margin-top: 25px;
+                    }
+                    &:nth-child(3) {
+                        margin-top: 25px;
+                    }
+                    &:nth-child(4) {
+                        margin-top: 30px;
+                    }
+                    &:nth-child(5) {
+                       margin-top: 25px; 
+                    }
+                }
+                top: 196px;
+            }
+            margin-top: 10px;
             position: relative;
-            height: calc(100% - 53px);
             width: 100%;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-end;
             flex-direction: column;
+            padding-right: 2%;
+            box-sizing:border-box;
+            #chart3-wrapper {
+                overflow: hidden;
+                #chart3 {
+                    position: absolute;
+                    width: 100%;
+                    height: 196px;
+                    bottom: -18%;
+                    left: 0;
+                }
+                width: 94%;
+                flex:0 0 40px !important;
+                position: relative;
+                margin-top: 30px;
+            }
             div {
-                &:nth-child(1) {
-                    flex: 1;
-                }
-                &:nth-child(2) {
-                    flex: 1;
-                }
-                &:nth-child(3) {
-                    flex: 1;
-                }
-                width: 100%;
+                // overflow: hidden;
+                width: 94%;
+                border-radius: 10px;
+                flex: 1;
+                // &:nth-child(1) {
+                //     height: 196px;
+                // }
+                // &:nth-child(2) {
+                //     height: 196px;
+                // }
             }
         }
+        #chart3-wrapper {
+            flex: 0 0 100px;
+        }
         .right-t {
-            font-size:17px;
+            font-size:16px;
             font-weight:bold;
             color: #777F8F;
-            padding-left: 58px;
+            padding-left: 48px;
             padding-right: 15px;
             box-sizing: border-box;
             .select {
+                cursor: pointer;
                 color: #777F8F;
                 line-height: 53px;
-                text-align: center;
-                width:180px;
+                text-align: left;
+                padding-left: 8px;
+                width:200px;
                 height:53px;
-                background-image: url('../../assets/img/boen/jx.png');
+                background: url('../../assets/img/boen/jx.png') no-repeat;
                 background-size: contain;
+            }
+            .active {
+                background-image: url('../../assets/img/boen/XY_active.png') !important;
+                background-size: cover;
+                span {
+                    &:nth-child(1){
+                        color:#777f8f !important;
+                    }
+                    &:nth-child(2){
+                        color:#fff !important;
+                    }
+                }
             }
             .x-y {
                 span {
@@ -677,6 +1395,7 @@ export default {
                         color:#fff;
                     }
                 }
+                cursor: pointer;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -686,11 +1405,10 @@ export default {
                 background-size: cover;
             }
             .left-top {
-                span {
-                    &:nth-child(2){
-                        color:#C0C4CC;
-                    }
+                .active_t{
+                    color:#C0C4CC;
                 }
+                cursor: pointer;
                 width:55px;
                 height:53px;
                 display: flex;
@@ -701,10 +1419,8 @@ export default {
                 background-size: cover;
             }
             .right-bottom {
-                span {
-                    &:nth-child(2){
-                        color:#C0C4CC;
-                    }
+                .active_t {
+                    color:#C0C4CC;
                 }
                 width:55px;
                 height:53px;
@@ -754,16 +1470,92 @@ export default {
             height: 53px;
             width: 100%;
         }
+        // padding-left: 20px;
+        box-sizing: border-box;
         flex: 1;
     }
     .left {
+        // <div class="status-icon">
+        //                     <div class="icon"></div>
+        //                     <div class="icon"></div>
+
+        //                     <div class="chart-wrapper">
+        //                         <div class="btn"></div>
+        //                         <div id="chartOnline" style="height:200px;width:200px;"></div>
+        //                     </div>
+        //                 </div>
+        .status-icon {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            .chart-wrapper {
+                flex: 1;
+            }
+            .active_1 {
+                background-image: url('../../assets/icons/radio-g.png') !important;
+            }
+            .active_2 {
+                background-image: url('../../assets/icons/radio-b.png') !important;
+            }
+            .btn {
+                cursor: pointer;
+                margin-left: 10px;
+                line-height: 24px;
+                font-size: 12px;
+                padding: 0 10px;
+                color: #777F8F;
+                font-weight: bold;
+                background-image: url('../../assets/icons/btn_1.png') !important;
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+            .icon {
+                &:nth-child(2) {
+                    margin-left: 5px;
+                }
+                width:18px;
+                height:18px;
+                background-image: url('../../assets/icons/radio-us.png');
+                background-size: cover;
+            }
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            .chart-wrapper {
+                position: relative;
+                #chartOnline {
+                    position: absolute;
+                    bottom: -10px;
+                    right: -5px;
+                }
+            }
+        }
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        .time-label {
+            width: auto;
+            font-size:14px;
+            font-weight:400;
+            color:rgba(1,146,114,1);
+            position: absolute;
+            right: 0px;
+            bottom: 4px;
+        }
         .left-item-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 60px;
+            box-sizing: border-box;
             .text-info {
                 font-size:14px;
                 font-weight:400;
                 color:rgba(1,146,114,1);
             }
             .left-item-disabled {
+                flex: 1;
                 padding: 0 20px 0 10px !important;
                 background-image: none !important;
                 font-weight: bold;
@@ -776,7 +1568,26 @@ export default {
                 }
                 align-items: flex-start !important;
             }
+            .bg-1 {
+                background-image: url('../../assets/img/boen/bg-3.png');
+                background-size: cover;
+            }
+            .bg-2 {
+                background-image: url('../../assets/img/boen/bg-1.png');
+                background-size: cover;
+            }
             .left-item {
+                flex: 1;
+                .unit {
+                    position: absolute;
+                    right: 20px;
+                    bottom: 30px;
+                    font-weight: bold;
+                    color: #fff;
+                    font-size: 16px;
+                }
+                position: relative;
+                border-radius:15px;
                 .closed {
                     .switch-radio {
                         left: 1px !important;         
@@ -811,14 +1622,7 @@ export default {
                 &:not(:last-child) {
                     margin-bottom: 10px;
                 }
-                &:nth-child(1) {
-                    background-image: url('../../assets/img/boen/bg-3.png');
-                    background-size: cover;
-                }
-                &:nth-child(2) {
-                    background-image: url('../../assets/img/boen/bg-1.png');
-                    background-size: cover;
-                }
+                
                 &:nth-child(3) {
                     background-image: url('../../assets/img/boen/bg-2.png');
                     background-size: cover;
@@ -863,7 +1667,7 @@ export default {
                     justify-content: space-between;
                     align-items: center;
                 }
-                height: 224px;
+                // height: 200px;
                 width: 303px;
             }
         }
@@ -883,7 +1687,7 @@ export default {
         box-sizing: border-box;
         flex: 0 0 303px;
     }
-    padding: 12px 10px 17px 16px;
+    padding: 12px 0px 17px 20px;
     box-sizing: border-box;
     display: flex;
     width: 100%;
@@ -897,19 +1701,22 @@ export default {
 .save-wrapper {
     .bottom {
         div {
-            &:nth-child(1) {
-                font-size:9px;
-                font-weight:normal;
-                color:rgba(0,0,0,.4);
+            &:nth-of-type(2) {
+                letter-spacing: 1.5px;
             }
-            &:nth-child(2) {
-                font-size:14px;
-                font-weight:normal;
-                color:rgba(65,176,134,1);
-            }
+            font-size: 20px;
+            font-weight: bold;
+            color: #42B086;
+            line-height: 21px;
         }
     }
     .top {
+        span {
+            color: rgba(0,0,0,.4);
+            font-weight: bold;
+            line-height: 17px;
+            font-size: 13px;
+        }
         img {
             margin-bottom: 5px;
         }

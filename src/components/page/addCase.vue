@@ -2,8 +2,10 @@
     <div class="login-wrap">
         <div class="loading-img">
             <div class="title">
-                <div></div>
-                新增病例
+                <button class="el-btn btn-2 btn-del" v-show="editCase.Id" @click="delHandle">
+                    × 删除病例
+                </button>
+                {{editCase.Id?'编辑病例':'新增病例'}}
                 <button class="el-btn btn-1" @click="$router.go(-1)">
                     <span class="triangle-left"></span>
                     返回
@@ -17,26 +19,24 @@
                             <img src="../../assets/icons/user.png" alt="">
                         </div>
                         <div class="user-wrapper">
-                            <input type="text" class="el-input" v-model="param.strID" placeholder="姓名"/>
-					        <input type="text" class="el-input" v-model="param.strName" placeholder="编号"/>
+                            <input type="text" class="el-input" v-model="editCase.strName" placeholder="姓名"/>
+					        <input type="text" class="el-input" v-model="editCase.strID" placeholder="编号"/>
                         </div>
                     </div>
                     <div class="l-bottom">
                         <h1><span></span>详细信息</h1>
                         <div class="number-wrapper">
-                            <el-input label="头围" endLabel="cm" v-model="elName"></el-input>
-                            <el-input label="体重" endLabel="kg" v-model="elName"></el-input>
-                            <el-input label="可选项" endLabel="..." v-model="elName"></el-input>
-                            <el-input label="可选项" endLabel="..." v-model="elName"></el-input>
+                            <ownInput label="头围" endLabel="cm" v-model="param.tw"></ownInput>
+                            <ownInput label="体重" endLabel="kg" v-model="param.tz"></ownInput>
+                            <ownInput label="身高" endLabel="cm" v-model="param.sg"></ownInput>
                         </div>
                     </div>
                 </div>
                 <div class="right">
                     <div class="r-top">
                         <div class="age-wrapper">
-                            <div class="label">年龄</div>
                             <div class="value-wrapper">
-                                <time-roll :show-top="false"></time-roll>
+                               <time-roll :default-value="param.nAge" :show-top="false" :edit-value="true" @ageChange="ageChange"></time-roll>
                             </div>
                         </div>
                         
@@ -52,45 +52,109 @@
                     </div>
                     <div class="r-bottom">
                         <h1><span></span>住院诊断及简要病情</h1>
-                        <textarea class="el-textarea textarea-1" name="" id="" rows="14" cols="5" v-model="param.Diagnosis"></textarea>
+                        <textarea class="el-textarea textarea-1" name="" id="" rows="14" cols="5" v-model="editCase.Diagnosis"></textarea>
                     </div>
 
-                    <button class="el-btn green-btn" @click="creatMonitor">开始监护</button>
+                    <button  style="float:right;width:250px;" v-if="btnStatus==2" class="el-btn green-btn" @click="saveItem">保存修改</button>
+                    <button class="el-btn green-btn" v-else @click="creatMonitor">开始监护</button>
                 </div>
             </div>
         </div>
+
+
+        <modifyCase :modifyData="editCase" :show-layer="showLayer" @closeLayer="showLayer = false" :jxjh="jxjh" :xzjh="xzjh"/>
     </div>
 </template>
 
 <script>
 import { Login } from '@/api/user';
-import { CreateNewPatient } from '@/api/monitor';
+import { CreateNewPatient,DeletePatient,UpdatePatientDiagnosis } from '@/api/monitor';
+import modifyCase from './modifyCase';
 export default {
+    components:{
+        modifyCase
+    },
     data: function() {
         return {
+            xzjh:false,
+            jxjh:false,
+            editCase:{
+                Diagnosis:'',
+                Id: '',
+                IsMan: 1,
+                nAge: 2012,
+                strID: "",
+                strName: ""
+            },
+            showLayer:false,
             sexType:1,
             elName:'',
             param: {
                 strID: '',
                 strName: '',
-                
-                nAge: 2209,
+                nAge: '',
                 IsMan: 0,
                 Diagnosis: '该病人与2014年8月2日入住我院，症状有法定法搜捏握发生的江岸诶，大赛恩发斯蒂芬呢，发达思恩分单赛季，打发范德萨发违法的撒娇范德萨，范迪塞尔客服能会计法阿斯顿发额外发撒旦法额问哈看。该病人与2014年8月2日入住我院，症状有法定法搜捏握发生的江岸诶.'
             },
+            btnStatus:1,
         };
     },
     created(){
+        if(this.$route.query.xzjh){ 
+            this.xzjh = true;
+        }
+        if(this.$route.query.jxjh){  //继续监护
+            this.showLayer = true;
+            this.jxjh = true;
+            this.editCase = JSON.parse(sessionStorage.getItem('item-user-info'));
+            this.btnStatus = 1;
+        } else if(this.$route.query.edit) {  //编辑
+            this.editCase = JSON.parse(sessionStorage.getItem('item-user-info'));
+            this.btnStatus = 2;
+        } else {  //新增
+            delete this.editCase.Id;
+            this.btnStatus = 3;
+        }
+        this.sexType = this.editCase.IsMan?1:2;
     },
     methods: {
-        creatMonitor(){
-            // this.param.nAge= this.param.ageYear+''+this.param.ageMouth;
-            CreateNewPatient(this.param).then(res=>{
+        delHandle(){
+            DeletePatient({
+                strID:this.editCase.strID
+            }).then(res=>{
                 console.log(res)
+                if(res.status) {
+                    this.$router.push({
+                        path: "/monitorCase",
+                        query:{
+                           type:2
+                        }
+                    });
+                }
             })
-            this.$router.push({
-                path: "/monitor"
-            });
+        },
+        ageChange(ev){
+            this.editCase.nAge = ev[0];
+            console.log(ev)
+        },
+        saveItem(){
+            UpdatePatientDiagnosis({
+                strID: this.editCase.strID,
+                content: this.editCase.Diagnosis
+            }).then(res=>{
+                this.$router.push({
+                    path: "/monitorCase",
+                    query:{
+                        type:2
+                    }
+                });
+            })
+        },
+        creatMonitor(){
+            CreateNewPatient(this.editCase).then(res=>{
+                console.log(res)
+                this.showLayer = true;
+            })
         },
         chooseSex(index){
             this.sexType= index;
@@ -106,8 +170,8 @@ export default {
     height:56px;
     margin-top: 20px;
     color: rgba(255, 255, 255, 1);
-    background: url(../../assets/img/boen/submit-btn.png) no-repeat;
-    background-size: contain;
+    background: url(../../assets/img/boen/begin.png);
+    background-size: cover;
     line-height: 56px;
     font-weight: bold;
 }
@@ -293,7 +357,7 @@ export default {
     box-sizing: border-box;
 }
 .textarea-1 {
-    width:443px;
+    width:470px;
     height:208px;
     font-size:14px;
     color:rgba(89,89,89,1);
@@ -320,11 +384,19 @@ h1 {
     background-image: url('../../assets/img/boen/bg-white.png');
     background-size: contain;
 }
+
 .btn-2 {
     width:84px;
     height:30px;
     font-size:14px;
     margin-top: -10px;
+}
+.btn-del {
+    margin-top: 0;
+    width:84px;
+    height:40px;
+    background: url(../../assets/icons/btn-del.png) no-repeat center center;
+    background-size: cover;
 }
 .password {
     width:250px;height:40px;
@@ -338,7 +410,7 @@ h1 {
     align-items: center;
     background-color: rgba(185, 198, 204, 1);
     .loading-img {
-        width:860px;
+        width:890px;
         height:554px;
         background:rgba(225,236,239,1);
         box-shadow:0px 4px 10px 0px rgba(12,3,6,0.1);

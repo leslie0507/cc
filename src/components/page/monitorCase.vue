@@ -4,8 +4,8 @@
         <div class="loading-img">
             <div class="title">
                 <div></div>
-                查询病例档案
-                <div class="el-btn-info-bs back-btn" @click="goHomePage"><span class="triangle-left"></span>返回</div>
+                {{this.type==1?'查询病例':'病例档案'}}
+                <div class="el-btn-info-bs back-btn" :class="[backType!=1?'back-btn_active':'']" @click="goHomePage"><span class="triangle-left"></span>返回</div>
             </div>
             <div class="input-wrapper">
                 <div class="userinfo">
@@ -16,25 +16,15 @@
                     <div class="info-wrapper">
                         <div class="item">
                             <div class="label">编号:</div>
-                            <div class="value">{{showData&&showData.strID}}</div>
+                            <input type="text" v-model="number" @change="searchData">
                         </div>
                         <div class="item">
                             <div class="label">姓名:</div>
-                            <div class="value">{{showData&&showData.strName}}</div>
+                            <input type="text" v-model="name" @change="searchData">
                         </div>
                     </div>
-
-                    <div class="age-wrapper">
-                        <div class="label">年龄</div>
-                        <div class="age-opt">
-                            <span>+</span>
-                            <span></span>
-                            <span>-</span>
-                        </div>
-                        <div class="value-wrapper">
-                            <time-roll :show-top="false"></time-roll>
-                        </div>
-                    </div>
+                    
+                    <time-roll :show-top="false" @ageChange="ageChange"></time-roll>
                     
                     <div class="sex-wrapper">
                         <div class="sex-top">
@@ -45,7 +35,7 @@
                                 <div class="btn-right" :class="{'active-3':sexType==3}" @click="chooseSex(3)">女</div>
                             </div>
                         </div>
-                        <div class="el-btn begin-btn">搜索</div>
+                        <div class="el-btn begin-btn" v-clicked>搜索</div>
                     </div>
                 </div>
 
@@ -62,27 +52,35 @@
                                         <td>编号</td>
                                         <td>年龄</td>
                                         <td>性别</td>
-                                        <td>类别</td>
+                                        <td v-if="type==2">编辑</td>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr @click="showDetail(item,index)" v-for="(item,index) in tableData" :key="index" :class="{'isClick':clickIndex==index}">
+                                    <tr @click="showDetail(item,index)" v-for="(item,index) in showData" :key="index" :class="{'isClick':clickIndex==index}">
                                         <td>{{item.Id}}</td>
                                         <td>{{item.strName}}</td>
                                         <td>{{item.strID}}</td>
-                                        <td>{{item.nAge}}</td>
+                                        <td>{{item.nAge | ageText}}</td>
                                         <td>{{item.IsMan?'男':'女'}}</td>
-                                        <td>{{item.type}}</td>
+                                        <td @click="editCase(item)" v-if="type==2">
+                                            <img style="height:30px;vertical-align: middle;" src="../../assets/img/boen/edit.png" alt="">
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <div class="pagenation">
+                            <div class="el-btn begin-btn" @click="preData" v-clicked>上一页</div>
+                            <div class="el-btn begin-btn" @click="nextData" v-clicked>下一页</div>
+                            <div class="text-wrapper">{{page}}/{{total}}</div>
                         </div>
                         
                     </div>
                     <div class="right">
                         <h1><span></span>病情摘要</h1>
-                        <textarea class="el-textarea textarea-1" name="" id="" rows="14" cols="30" v-model="showData.Diagnosis"></textarea>
-                        <button class="el-btn green-btn" @click="checkMonitor">查阅监护数据</button>
+                        <textarea class="el-textarea textarea-1" :style="{'height':type==1?'calc(100% - 128px)':'calc(100% - 132px)'}" name="" id="" rows="14" cols="30" v-model="chooseData.Diagnosis"></textarea>
+                        <button class="el-btn green-btn" @click="checkMonitor" v-if="type==1">查阅监护数据</button>
                     </div>
 
                     
@@ -90,47 +88,194 @@
             </div>
             
         </div>
+
+        <!-- <div class="print-wrapper" v-if="showDialog">
+            <div class="dialog-title">登录</div>
+            <div class="dialog-content" style="padding:60px 60px;">
+                <input style="width:100%;" type="password" class="el-input el-input-lg" placeholder v-model="psd" />
+                <span style="color:red;font-size:14px;" v-show="status">密码错误</span>
+            </div>
+
+            <div class="dialog-btn-wrapper" style="flex-direction: row;margin-right:0px;border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;">
+                <button class="el-btn blue-btn btn-1" @click="backHome">返回</button>
+                <button class="el-btn blue-btn btn-2" @click="checkPsd">确认</button>
+            </div>
+        </div> -->
+
     </div>
 </template>
 
 <script>
-import { ScanPatient } from '@/api/monitor';
+import { ScanPatient,CheckPassword } from '@/api/monitor';
+import moment from 'moment';
 export default {
     data: function() {
         return {
-            showData:{},
+            backType:1,
+            status:false,
+            psd:'',
+            showDialog:false,
+            page:1,
+            pageSize:5,
+            total:0,
             clickIndex:-1,
             tableData:[],
-            sexType:1
+            sexType:2,
+            searchAge:'2012',
+            optType:'',
+            number:'',
+            name:'',
+            type:1,
+            chooseData:{}
         };
     },
+    computed:{
+        showData(){
+            let arr =[];
+            this.tableData.map(item=>{
+                let itemAge = this.pad(item.nAge,4);
+                let searchAge = this.pad(this.searchAge,4);
+                console.log(itemAge,searchAge)
+                if(this.optType == 1) {
+                    if(itemAge > searchAge) {
+                        arr.push(item)
+                    }
+                }else if(this.optType == 2) {
+                    if(itemAge == searchAge) {
+                        arr.push(item)
+                    }
+                }else if(this.optType == 3) {
+                    if(itemAge < searchAge) {
+                        arr.push(item)
+                    }
+                }else {
+                    arr.push(item)
+                }
+                
+            });
+            this.total = Math.ceil(arr.length/5);
+            arr = arr.slice((this.page-1)*this.pageSize,this.page*this.pageSize);
+            arr = arr.filter(item=>{
+                if(!this.name) {
+                    return true;
+                }
+                return item.strName.indexOf(this.name)!=-1;
+            })
+            console.log(arr)
+            arr = arr.filter(item=>{
+                if(!this.number) {
+                    return true;
+                }
+                return item.strID.indexOf(this.number)!=-1;
+            })
+            arr = arr.filter(item=>{
+                if(this.sexType == 2){
+                    return true
+                }
+                if(this.sexType == 1){
+                    return item.IsMan
+                }
+                if(this.sexType == 3){
+                    return !item.IsMan
+                }
+            })
+           
+            return arr;
+        }
+    },
     created(){
-        console.log(ScanPatient)
+        this.type = this.$route.query.type
+        console.log()
         this.getData();
+        if(sessionStorage.getItem('savePsd')){
+            if(sessionStorage.getItem('savePsd') < +new Date) {
+                this.showDialog = true;
+                sessionStorage.removeItem('savePsd');
+            }
+        } else {
+            this.showDialog = true;
+        }
     },
     methods: {
+        preData(){
+            if(this.page>1) {
+                --this.page
+            } 
+        },
+        nextData(){
+             if(this.page<this.total) {
+                ++this.page
+            } 
+        },
+        editCase(item){
+            sessionStorage.setItem('item-user-info',JSON.stringify(item));
+            
+            this.$router.push({
+                name: "addCase",
+                query:{
+                    edit:true
+                }
+            });
+        },
+        checkPsd(){
+            CheckPassword({
+                password: this.psd
+            }).then(res=>{
+                this.status = !res.status;
+                this.showDialog = !res.status;
+                if(res.status){
+                    sessionStorage.setItem('savePsd',moment(new Date()).add(6, 'hours').valueOf())
+                }
+                console.log(res.status)
+            })
+        },
+        pad(num, length) {  
+            return ( num + "0000000000000000"  ).substr(0,length );  
+        },
+        ageChange(ev,type){
+            this.page = 1;
+            this.searchAge = ev[0];
+            this.optType = ev[1];
+        },
+        searchData(ev){
+            console.log(ev)
+        },
         chooseSex(val){
             this.sexType=val;
         },
         checkMonitor(){
+            sessionStorage.setItem('item-user-info',JSON.stringify(this.chooseData));
+            sessionStorage.setItem('backUrl','monitorCase');
             this.$router.push({
-                path: "/monitor"
+                name: "monitor",
+                params:{
+                    pathType:2
+                }
             });
         },
         showDetail(item,index){
             this.clickIndex= index;
-            this.showData= item;
+            this.chooseData= item;
         },
         getData(){
             ScanPatient().then(res=> {
-                this.tableData = res.data.slice(0,5);
+                this.tableData = res.data;
             })
         },
         goHomePage(){
+            this.backType = 2;
+            setTimeout(()=>{
+                this.$router.push({
+                    path: "/kidNav",
+                });
+            },300)
+            
+        },
+        backHome(){
             this.$router.push({
                 path: "/kidNav",
             });
-        }　
+        }
     }
 };
 </script>
@@ -141,8 +286,8 @@ export default {
     width: 100%;
     height:56px;
     color: rgba(255, 255, 255, 1);
-    background: url(../../assets/img/boen/submit-btn-1.png) no-repeat;
-    background-size: contain;
+    background: url(../../assets/img/boen/begin.png) no-repeat;
+    background-size: cover;
     line-height: 56px;
     font-weight: bold;
 }
@@ -187,6 +332,9 @@ export default {
     width: 100%;
     height: 100%;
     .loading-img {
+        .back-btn_active {
+            background: url(../../assets/img/boen/back-click_active.png) no-repeat !important;
+        }
         .back-btn {
             cursor:pointer;
             width:98px;
@@ -293,35 +441,6 @@ export default {
                     line-height:30px;
                     margin-right: 15px;
                 }
-                .age-opt {
-                    span {
-                        &:nth-child(1){
-                            color: #fff;
-                            background: url(../../assets/img/boen/add-btn-3.png) no-repeat;
-                            background-size: contain;
-                        }
-                        &:nth-child(2){
-                            background: url(../../assets/img/boen/add-btn-2.png) no-repeat; 
-                            background-size: contain;
-                        }
-                        &:nth-child(3){
-                            color: rgba(23, 125, 146, 1);
-                            background: url(../../assets/img/boen/add-btn-1.png) no-repeat; 
-                            background-size: contain;
-                        }
-                        cursor: pointer;
-                        width:40px;
-                        height:30px;
-                        line-height: 30px;
-                        text-align: center;
-                        display: inline-block;
-                    }
-                    margin-right: 10px;
-                    display: flex;
-                    align-items: center;
-                    flex-direction: column;
-                    justify-content: space-between;
-                }
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -333,6 +452,17 @@ export default {
                 justify-content: space-between;
                 align-items: flex-start;
                 .item{ 
+                    display: flex;
+                    align-items: center;
+                    input {
+                        color: #4DB5CB;
+                        font-size: 18px;
+                        height: 38px;
+                        width: 60%;
+                        font-weight: bold;
+                        border: none;
+                        outline: none;
+                    }
                     &:nth-child(1){
                         margin-bottom: 10px;
                     }
@@ -373,9 +503,29 @@ export default {
                     flex: 0 0 280px;
                 }
                 .left {
+                    .pagenation {
+                        .text-wrapper {
+                            margin-left: 10px;
+                            letter-spacing: 2px;
+                        }
+                        .begin-btn {
+                            &:nth-child(1){
+                                margin-right: 10px;
+                            }
+                            background-size: cover;
+                            height: 40px;
+                            margin-top: 0px !important;
+                            width: 120px;
+                        }
+                        margin-top: 25px;
+                        width: 100%;
+                        display: flex;
+                        justify-content: flex-start;
+                        align-items: center;
+                    }
                     flex: 1;
                     .table-wrapper {
-                        height: calc(100% - 35px);
+                        height: calc(100% - 110px);
                         border-radius:8px;
                         background: #fff;
                     }
@@ -385,7 +535,7 @@ export default {
                         tbody {
                             background: #fff;
                             .isClick {
-                                background: rgba(245, 245, 245, 1);
+                                background: rgba(192, 192, 192, .6);
                             }
                             tr {
                                 cursor: pointer;
@@ -507,6 +657,99 @@ export default {
             line-height:30px;
             text-shadow:0px 2px 0px rgba(255,255,255,1);
         }
+    }
+}
+.print-wrapper {
+    height: 289px;
+    background: #E1EBEF;
+    .dialog-title {
+        width: 330px;
+        height: 60px;
+        line-height: 60px;
+        background: linear-gradient(0deg, #E5E5E5, #FFFFFF);
+        font-size: 22px;
+        font-weight: bold;
+        color: #777F8F;
+        text-shadow: 0px 1px 0px #FFFFFF;
+        text-align: center;
+        
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .dialog-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        background: #E1EBEF;
+        .item {
+            input {
+                height: 26px;
+                width: 65%;
+            }
+            width: 100%;
+            height: 90px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            &:first-child {
+                border-bottom: 1px solid #CBCBCB;
+            }
+            span {
+                font-size: 17px;
+                font-weight: bold;
+                color: #777F8F;
+            }
+        }
+        padding:  0 30px 0px;
+        box-sizing: border-box;
+        width: 330px;
+        
+        box-shadow: 0px 4px 10px 0px rgba(11, 3, 6, 0.2);
+    }
+    border-radius: 8px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: rgba(0,0,0,.3);
+}
+.dialog-btn-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 330px;
+    align-items: center;
+    background: #E1EBEF;
+    padding:  0 30px 30px;
+    box-sizing: border-box;
+    //蓝色按钮
+    .blue-btn {
+        width: 128px;
+        height: 40px;
+        background: url(../../assets/icons/blue-btn.png) no-repeat;
+        background-size: cover;
+        font-size: 18px;
+        color: rgba(255, 255, 255, 1);
+
+        line-height: 40px;
+        font-weight: bold;
+    }
+
+    .btn-2 {
+        margin-top: 0;
+        // margin-left: 10px;
+        width: 142px;
+        height: 46px;
+    }
+    .btn-1 {
+        margin-right: 10px;
+        width: 88px;
+        height: 46px;
     }
 }
 </style>

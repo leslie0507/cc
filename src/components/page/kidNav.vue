@@ -82,20 +82,26 @@ export default {
         },
         goMonitor(){
             this.$router.push({
-                path: "/monitor",
+                path: "/queryMonitor",
             });
         },
         goMonitorCase(type){
             if(type==1) {
                 this.$router.push({
                     path: "/monitorCase",
+                    query:{
+                        type:1
+                    }
                 });
+               
             }else {
                 this.$router.push({
-                    path: "/queryMonitor",
+                    path: "/monitorCase",
+                    query:{
+                        type:2
+                    }
                 });
             }
-           
         }
     },
 }
@@ -126,7 +132,6 @@ button {
     }
     .logo {
         width: 221px;
-        height: 78px;
         margin: 72px 0px 34px 0px;
         img {
             width: 221px;

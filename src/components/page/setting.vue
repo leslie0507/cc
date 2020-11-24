@@ -14,7 +14,7 @@
                     <li @click="goSettingTime">显示设置</li>
                     <li @click="goSettingUser">用户设置</li>
                     <li @click="">后台硬件维护</li>
-                    <li @click="">语言设置</li>
+                    <!-- <li @click="">语言设置</li> -->
                     <li @click="">恢复出厂设置</li>
                 </ul>
             </div>
@@ -126,7 +126,7 @@ export default {
     background-size: cover;
     .loading-img {
         width: 504px;
-        height: 500px;
+        height: 420px;
         background: #e1ecef;
         
         box-shadow: 0px 4px 10px 0px rgba(12, 3, 6, 0.2);
@@ -168,7 +168,7 @@ export default {
         }
         .setting-wrapper {
             width: 504px;
-            height: 440px;
+            height: 380px;
            
             ul {
                 list-style: none;

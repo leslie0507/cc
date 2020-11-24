@@ -2,6 +2,11 @@
     <div class="manual-wrap">
         <!-- title -->
         <div class="op-title">
+            <router-link :to="'/kidNav'">
+                 <img class="back-home" src="../../assets/icons/home.png" alt="">
+            </router-link>
+           
+
             <div class="op-title-left">
                 <img src="../../assets/icons/kidNavLogo.png" alt="logo" />
                 <p>© 2020 All Rights Reserved. 重庆博恩富克医疗设备有限有限公司</p>
@@ -26,12 +31,12 @@
                 </div>
                 <div class="op-process-step"  :class="{'active':type==3}" @click="changePage(3)">
                     <div class="step-number">3</div>
-                    <div class="step-name">连接导联线</div>
+                    <div class="step-name">连接测试线</div>
                     <div class="step-en">Connect the lead wires</div>
                 </div>
                 <div class="op-process-step"  :class="{'active':type==4}" @click="changePage(4)">
                     <div class="step-number">4</div>
-                    <div class="step-name">粘贴电极片</div>
+                    <div class="step-name">粘贴电极</div>
                     <div class="step-en">Paste electrode</div>
                 </div>
                 <div class="op-process-step" :class="{'active':type==5}" @click="changePage(5)">
@@ -47,17 +52,17 @@
                         <img src="../../assets/icons/info/1.png" alt="">
                         <div class="title-wrapper title-wrapper-1">
                             <div>主 机</div>
-                            <div>电极片</div>
+                            <div>电极</div>
                         </div>
                     </div>
-                    <div class="detail-text">检查电源线、导联线、电极片、推剪、剃须刀、酒精、棉签等物品是否准备完好。</div>
+                    <div class="detail-text">检查电源线、测试线、电极、推剪、剃须刀、酒精、棉签等物品是否准备完好。</div>
                 </div>
                 <div class="detail-content" v-show="type==2">
                     <div class="detail-img" >
                         <img src="../../assets/icons/info/2.png" alt="">
                         <div class="title-wrapper title-wrapper-2">
                             <div>主 机</div>
-                            <div>电极片</div>
+                            <div>电极</div>
                         </div>
                     </div>
                     <div class="detail-text detail-text-2">清洁粘贴位置（右图黑色框选处）的毛发，以触之不扎手为度再用酒精脱脂备皮处 3-5 次。</div>
@@ -72,7 +77,7 @@
                             <div>黑色</div>
                         </div>
                     </div>
-                    <div class="detail-text">导联线连接设备，按照①棕色、②绿色、③白色、④黑色顺序扣上电极片</div>
+                    <div class="detail-text">测试线连接设备，按照①棕色、②绿色、③白色、④黑色顺序扣上电极</div>
                 </div>
                 <div class="detail-content" v-show="type==4">
                     <div class="detail-img detail-img-4">
@@ -94,7 +99,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="detail-text detail-text-4">4个电极片左右两两对称，后方电极片中心（纽扣）对齐外耳道上方耳廓最高点，电极片下缘与外眼角延长线重合（如右图红线所示），前方电极片紧贴后方电极片并排，“米”字法粘贴。</div>
+                    <div class="detail-text detail-text-4">4个电极左右两两对称，后方电极中心（纽扣）对齐外耳道上方耳廓最高点，电极下缘与外眼角延长线重合（如右图红线所示），前方电极紧贴后方电极并排，“米”字法粘贴。</div>
                 </div>
                 <div class="detail-content"  v-show="type==5">
                     <div class="detail-img detail-img-5">
@@ -104,15 +109,16 @@
                 </div>
                 
                 <div class="detail-btn">
-                    <div class="pre" @click="subPage"></div>
-                    <div class="next" @click="addPage">NEXT</div>
+                    <div class="pre" @click="subPage" v-show="type!=5"></div>
+                    <div class="next" @click="addPage" v-show="type!=5" v-clicked>NEXT</div>
+                    <div class="back" @click="subPage" v-show="type==5" v-clicked></div>
                 </div>
             </div>
             <div class="detail-attention">
                 <span>注意事项</span>
-                <span>①电极片专机专用，其他心电电极无法取代。</span>
-                <span>②电极片单次使用不宜超过4小时，需及时更换电极片。</span>
-                <span>③电极片一次性使用，不能重复使用。</span>
+                <span>①电极专机专用，其他心电电极无法取代。</span>
+                <span>②电极单次使用不宜超过4小时，需及时更换电极。</span>
+                <span>③电极一次性使用，不能重复使用。</span>
             </div>
         </div>
     </div>
@@ -154,6 +160,14 @@ export default {
     align-items: center;
     background-color: #f6f7fb;
     .op-title {
+        position: relative;
+        .back-home{
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 50px;
+            cursor: pointer;
+        }
         width: 891px;
         height: 150px;
         display: flex;
@@ -411,6 +425,32 @@ export default {
                     background: url(../../assets/icons/pre.png) no-repeat 15px center;
                     margin-right: 5px;
                 }
+                .back {
+                    cursor: pointer;
+                    width: 83px;
+                    height: 34px;
+                    border-radius: 8px;
+                    background: rgba(1, 145, 113, 1);
+                    font-size: 13px;
+                    font-family: AlibabaPuHuiTi;
+                    font-weight: 500;
+                    color: rgba(255, 255, 255, 1);
+                    line-height: 34px;
+                    position: relative;
+                    padding-left: 16px;
+                    
+                    &::after {
+                        position: absolute;
+                        border-radius: 10px;
+                        left: 0px;
+                        top: 0px;
+                        width: 83px;
+                        height: 34px;
+                        content: '';
+                        background: url(../../assets/icons/bank_icon.png) no-repeat center;
+                    }
+                }
+                    
                 .next {
                     cursor: pointer;
                     width: 83px;
@@ -424,6 +464,7 @@ export default {
                     line-height: 34px;
                     position: relative;
                     padding-left: 16px;
+                    border-radius: 10px;
                     &::after {
                         position: absolute;
                         left: 0px;

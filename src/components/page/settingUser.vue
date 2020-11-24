@@ -13,12 +13,12 @@
                 <div class="input-wrapper">
                     <div class="hosp-name">
                         <span>医院名称</span>
-                        <input class="el-input setting-user-input" type="text" v-model="user" @blur="save"/>
+                        <input class="el-input setting-user-input" type="text" v-model="user" @change="save"/>
                     </div>
 
                     <div class="user-pwd">
                         <span>用户密码</span>
-                        <input class="el-input setting-user-input" type="password" v-model="password"   @blur="save"/>
+                        <input class="el-input setting-user-input" type="password" v-model="password"   @change="save"/>
                     </div>
                 </div>
             </div>
@@ -41,6 +41,9 @@ export default {
     },
     methods: {
         save(){
+            if(!this.user || !this.password) {
+                return
+            }
             UserSetting({
                 user:this.user,
                 password:this.password

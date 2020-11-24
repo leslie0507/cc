@@ -2,11 +2,8 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import ElementUI from 'element-ui';
-import VueProgressBar from "vue-progressbar";
 import echarts from 'echarts';
 
-
-import { Notification,Message } from 'element-ui';
 
 import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
 import './assets/css/icon.css';
@@ -20,10 +17,19 @@ import './utils/rem';
 //------------ 全局配置组件 开始 -----------------
 import uploadFile from '@/components/common/uploadFile'   //导入组件
 Vue.component('uploadFile', uploadFile)
-Vue.component('elInput', elInput)
+Vue.component('ownInput', elInput)
 Vue.component('timeRoll', timeRoll)
 //------------ 全局配置组件 结束 -----------------
 
+
+Vue.filter('ageText', (value)=> {
+  let valueText = value.toString();
+  if(valueText.length==2 || valueText.length==1) {
+    return value + '岁'     
+  } else if(valueText.length==3 || valueText.length==4) {
+    return valueText.substr(0,2) + '岁' + valueText.substr(2) + '月'  
+  }
+})
 
 import Axios from "./lib/ajax";
 
@@ -56,6 +62,31 @@ Vue.prototype.$echarts = echarts;
 //         next();
 //     }
 // });
+document.oncontextmenu = function (evt) {
+    evt.preventDefault();
+};
+document.onselectstart = function (evt) {
+    evt.preventDefault();
+};
+
+Vue.directive('clicked', {
+    // 指令的定义；当被绑定的元素插入到 DOM 中时……
+    inserted: function (el) {
+      // 聚焦元素
+     
+      el.onclick= ()=>{
+        // el.style.transition = 'all 0.1s';
+        el.style.transform = 'scale(.95)';
+        setTimeout(()=>{
+            el.style.transform = 'scale(1)';
+        },150)
+      };
+      
+    }
+  })
+
+Vue.use(ElementUI);
+
 
 export default new Vue({
     router,

@@ -6,8 +6,8 @@
                 <div></div>
                 监护病例
                 <div class="right-wrapper">
-                    <button class="el-btn green-btn-top" @click="addCase">+ 新增病例</button>
-                    <div class="el-btn-info-bs back-btn" @click="goHomePage"><span class="triangle-left"></span>返回</div>
+                    <button class="el-btn green-btn-top" :class="[addType!=1?'green-btn-top_active':'']" @click="addCase" v-clicked>+ 新增病例</button>
+                    <div class="el-btn-info-bs back-btn" :class="[backType!=1?'back-btn_active':'']"  @click="goHomePage" v-clicked><span class="triangle-left"></span>返回</div>
                 </div>
             </div>
             <div class="input-wrapper">
@@ -19,25 +19,16 @@
                     <div class="info-wrapper">
                         <div class="item">
                             <div class="label">编号:</div>
-                            <div class="value">{{showData&&showData.strID}}</div>
+                            <input type="text" v-model="number" @change="searchData">
                         </div>
                         <div class="item">
                             <div class="label">姓名:</div>
-                            <div class="value">{{showData&&showData.strName}}</div>
+                            <input type="text" v-model="name" @change="searchData">
                         </div>
                     </div>
 
-                    <div class="age-wrapper">
-                        <div class="label">年龄</div>
-                        <div class="age-opt">
-                            <span>+</span>
-                            <span></span>
-                            <span>-</span>
-                        </div>
-                        <div class="value-wrapper">
-                            <time-roll :show-top="false"></time-roll>
-                        </div>
-                    </div>
+                    
+                    <time-roll :show-top="false"  :show-text="false" @ageChange="ageChange"/>
                     
                     <div class="sex-wrapper">
                         <div class="sex-top">
@@ -48,7 +39,7 @@
                                 <div class="btn-right" :class="{'active-3':sexType==3}" @click="chooseSex(3)">女</div>
                             </div>
                         </div>
-                        <div class="el-btn begin-btn">搜索</div>
+                        <div class="el-btn begin-btn" v-clicked>搜索</div>
                     </div>
                 </div>
 
@@ -69,23 +60,29 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr @click="showDetail(item,index)" v-for="(item,index) in tableData" :key="index" :class="{'isClick':clickIndex==index}">
+                                    <tr @click="showDetail(item,index)" v-for="(item,index) in showTableData" :key="index" :class="{'isClick':clickIndex==index}">
                                         <td>{{item.Id}}</td>
                                         <td>{{item.strName}}</td>
                                         <td>{{item.strID}}</td>
-                                        <td>{{item.nAge}}</td>
+                                        <td>{{item.nAge | ageText}}</td>
                                         <td>{{item.IsMan?'男':'女'}}</td>
                                         <td>{{item.type}}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
+
+                        <div class="pagenation" v-if="total">
+                            <div class="el-btn begin-btn" @click="preData" v-clicked>上一页</div>
+                            <div class="el-btn begin-btn" @click="nextData" v-clicked>下一页</div>
+                            <div class="text-wrapper">{{page}}/{{total}}</div>
+                        </div>
                         
                     </div>
                     <div class="right">
                         <h1><span></span>病情摘要</h1>
                         <textarea class="el-textarea textarea-1" name="" id="" rows="14" cols="30" v-model="showData.Diagnosis"></textarea>
-                        <button class="el-btn green-btn" @click="checkMonitor">继续监护</button>
+                        <button class="el-btn green-btn" @click="checkMonitor" v-clicked>继续监护</button>
                     </div>
 
                     
@@ -101,26 +98,119 @@ import { ScanPatient } from '@/api/monitor';
 export default {
     data: function() {
         return {
+            addType:1,
+            backType:1,
             showData:{},
-            clickIndex:0,
+            clickIndex:-1,
             tableData:[],
-            sexType:1
+            sexType:2,
+            searchAge:'2012',
+            optType:'',
+            number:'',
+            name:'',
+            total:0,
+            page:1,
+            pageSize:5,
         };
     },
+    computed:{
+        showTableData(){
+            let arr =[];
+            this.tableData.map(item=>{
+                let itemAge = this.pad(item.nAge,4);
+                let searchAge = this.pad(this.searchAge,4);
+                
+                if(this.optType == 1) {
+                    if(itemAge > searchAge) {
+                        arr.push(item)
+                    }
+                }else if(this.optType == 2) {
+                    if(itemAge == searchAge) {
+                        arr.push(item)
+                    }
+                }else if(this.optType == 3) {
+                    if(itemAge < searchAge) {
+                        arr.push(item)
+                    }
+                } else {
+                    arr.push(item)
+                }
+            });
+            this.total = Math.ceil(arr.length/5);
+            arr = arr.slice((this.page-1)*this.pageSize,this.page*this.pageSize);
+            arr = arr.filter(item=>{
+                if(!this.name) {
+                    return true;
+                }
+                return item.strName.indexOf(this.name)!=-1;
+            })
+            arr = arr.filter(item=>{
+                if(!this.number) {
+                    return true;
+                }
+                return item.strID.indexOf(this.number)!=-1;
+            })
+            arr = arr.filter(item=>{
+                if(this.sexType == 2){
+                    return true
+                }
+                if(this.sexType == 1){
+                    return item.IsMan
+                }
+                if(this.sexType == 3){
+                    return !item.IsMan
+                }
+            })
+           
+            return arr;
+        }
+    },
     created(){
-        console.log(ScanPatient)
         this.getData();
     },
     methods: {
+        pad(num, length) {  
+            return ( num + "0000000000000000"  ).substr(0,length );  
+        },
+        preData(){
+            if(this.page>1) {
+                --this.page
+            } 
+        },
+        nextData(){
+             if(this.page<this.total) {
+                ++this.page
+            } 
+        },
+        searchData(){
+
+        },
+        ageChange(ev,type){
+            this.page = 1;
+            this.searchAge = ev[0];
+            this.optType = ev[1];
+        },
         chooseSex(val){
             this.sexType=val;
         },
         checkMonitor(){
+            if(this.clickIndex == -1){
+                return
+            }
+            sessionStorage.setItem('backUrl','queryMonitor');
             sessionStorage.setItem('item-user-info',JSON.stringify(this.showData));
+            // this.$router.push({
+            //     name: "monitor",
+            //     params:{
+            //         pathType:1,
+            //         ...this.showData
+            //     }
+            // });
+
             this.$router.push({
-                name: "monitor",
-                params:{
-                    ...this.showData
+                path: "/addCase",
+                query:{
+                    jxjh:true
                 }
             });
         },
@@ -131,25 +221,39 @@ export default {
         getData(){
             ScanPatient().then(res=> {
                 console.log(res)
-                this.tableData = res.data.slice(0,5);
+                this.tableData = res.data;
                 this.showData= this.tableData[0]
             })
         },
         addCase(){
-            this.$router.push({
-                path: "/addCase",
-            });
+            this.addType =2;
+            setTimeout(()=>{
+                this.$router.push({
+                    path: "/addCase",
+                    query:{
+                        xzjh:true
+                    }
+                });
+            },500)
+            
         },
         goHomePage(){
-            this.$router.push({
-                path: "/kidNav",
-            });
+            this.backType = 2;
+            setTimeout(()=>{
+                this.$router.push({
+                    path: "/kidNav",
+                });
+            },300)
+            
         }　
     }
 };
 </script>
 
 <style lang="scss" scoped>
+.green-btn-top_active {
+    background: url(../../assets/img/boen/submit-btn-1_active.png) no-repeat !important;
+}
 .green-btn-top {
     width:120px;
     height:48px;
@@ -165,8 +269,8 @@ export default {
     width: 100%;
     height:56px;
     color: rgba(255, 255, 255, 1);
-    background: url(../../assets/img/boen/submit-btn-1.png) no-repeat;
-    background-size: contain;
+    background: url(../../assets/img/boen/begin.png) no-repeat;
+    background-size: cover;
     line-height: 56px;
     font-weight: bold;
 }
@@ -211,13 +315,17 @@ export default {
     width: 100%;
     height: 100%;
     .loading-img {
+        .back-btn_active {
+            background: url(../../assets/img/boen/back-click_active.png) no-repeat !important;
+        }
         .back-btn {
+            background: url(../../assets/img/boen/back-click.png) no-repeat;
             cursor:pointer;
-            width:98px;
+            width:102px;
             height:48px;
             line-height: 48px;
             text-align: center;
-            border:1px solid rgba(179, 179, 179, 1);
+            border:none;
             border-radius:8px;
             color: #777F8F;
             font-size:18px;
@@ -308,48 +416,6 @@ export default {
                     align-items: center;
                 }
             }
-
-            .age-wrapper {
-                .label {
-                    font-size:18px;
-                    font-weight:bold;
-                    color:rgba(119,127,143,1);
-                    line-height:30px;
-                    margin-right: 15px;
-                }
-                .age-opt {
-                    span {
-                        &:nth-child(1){
-                            color: #fff;
-                            background: url(../../assets/img/boen/add-btn-3.png) no-repeat;
-                            background-size: contain;
-                        }
-                        &:nth-child(2){
-                            background: url(../../assets/img/boen/add-btn-2.png) no-repeat; 
-                            background-size: contain;
-                        }
-                        &:nth-child(3){
-                            color: rgba(23, 125, 146, 1);
-                            background: url(../../assets/img/boen/add-btn-1.png) no-repeat; 
-                            background-size: contain;
-                        }
-                        cursor: pointer;
-                        width:40px;
-                        height:30px;
-                        line-height: 30px;
-                        text-align: center;
-                        display: inline-block;
-                    }
-                    margin-right: 10px;
-                    display: flex;
-                    align-items: center;
-                    flex-direction: column;
-                    justify-content: space-between;
-                }
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
             .info-wrapper {
                 margin-left: 147px;
                 display: flex;
@@ -357,6 +423,15 @@ export default {
                 justify-content: space-between;
                 align-items: flex-start;
                 .item{ 
+                    input {
+                        color: #4DB5CB;
+                        font-size: 18px;
+                        height: 38px;
+                        width: 60%;
+                        font-weight: bold;
+                        border: none;
+                        outline: none;
+                    }
                     &:nth-child(1){
                         margin-bottom: 10px;
                     }
@@ -398,8 +473,29 @@ export default {
                 }
                 .left {
                     flex: 1;
+                    .pagenation {
+                        .text-wrapper {
+                            margin-left: 10px;
+                            letter-spacing: 2px;
+                        }
+                        .begin-btn {
+                            &:nth-child(1){
+                                margin-right: 10px;
+                            }
+                            background-size: cover;
+                            height: 40px;
+                            margin-top: 0px !important;
+                            width: 120px !important;
+                        }
+                        margin-top: 25px;
+                        width: 100%;
+                        display: flex;
+                        justify-content: flex-start;
+                        align-items: center;
+                    }
                     .table-wrapper {
-                        height: calc(100% - 35px);
+                        height: calc(100% - 110px);
+                        overflow-y: auto;
                         border-radius:8px;
                         background: #fff;
                     }
@@ -409,7 +505,7 @@ export default {
                         tbody {
                             background: #fff;
                             .isClick {
-                                background: rgba(245, 245, 245, 1);
+                                background: rgba(192, 192, 192, .6);
                             }
                             tr {
                                 cursor: pointer;
